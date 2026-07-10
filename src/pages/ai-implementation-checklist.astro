@@ -1,0 +1,317 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import CitationChip from '../components/CitationChip.astro';
+import { SITE, breadcrumb, faqPage, orgId, personId } from '../lib/site';
+import { getSource } from '../lib/sources';
+
+const path = '/ai-implementation-checklist';
+const title = 'AI implementation checklist, with the research behind each step | implementai.today';
+const description =
+  'Eight checklist steps, each one existing because a named study found that skipping it correlates with an abandoned project or a return that never arrived. Ungated, with RAND, Gartner, MIT and IBM cited against every step.';
+
+const h1 = 'An AI implementation checklist that works backwards from failure';
+
+const lead =
+  'Every step below exists because a named study found that skipping it correlates with an abandoned project or a return that never showed up. It draws on RAND’s interviews with 65 practitioners, two Gartner abandonment forecasts, MIT’s adoption research and IBM’s CEO survey, not on opinion about best practice. Work through it before you write any code, not after the pilot stalls.';
+
+const published = '2026-07-10';
+
+const citedIds = ['rand-leadership', 'gartner-poc', 'mit-nanda', 'ibm-ceo'];
+const cited = citedIds.map(getSource);
+
+const steps = [
+  {
+    id: 'step-1-name-the-problem',
+    name: 'Name the problem before you name the technology',
+    text: 'Write the problem down in one sentence without the words AI, model or agent. RAND interviewed 65 practitioners and found that 84% named a leadership-driven cause, most often misunderstanding or miscommunicating the problem, as the primary reason AI projects fail.',
+  },
+  {
+    id: 'step-2-set-one-metric-and-its-baseline',
+    name: 'Set one metric, and record its baseline before you start',
+    text: 'Gartner names unclear business value among the reasons it forecasts that at least 30% of generative AI projects will be abandoned after proof of concept. Pick one metric and write down today’s number before any work begins.',
+  },
+  {
+    id: 'step-3-check-the-data-before-you-commit',
+    name: 'Check the data exists and is reachable before you commit budget',
+    text: 'Poor data quality is the first reason Gartner names in its forecast that at least 30% of generative AI projects will be abandoned after proof of concept. Confirm the data exists, is reachable, and has actually been queried, rather than assumed.',
+  },
+  {
+    id: 'step-4-decide-what-you-are-building',
+    name: 'Decide what you are actually building',
+    text: 'MIT found that of organisations evaluating custom or vendor-sold enterprise tools, 60% evaluated one, 20% reached a pilot, and 5% reached production. Buying or configuring an existing tool crosses into real use far more often than building bespoke.',
+  },
+  {
+    id: 'step-5-fit-it-into-a-workflow-people-already-run',
+    name: 'Fit it into a workflow people already run',
+    text: 'MIT states that the core barrier to scaling generative AI is not infrastructure, regulation or talent, it is learning. Tools that replace a step in an existing daily workflow get used and improved. Tools that require a new habit mostly do not.',
+  },
+  {
+    id: 'step-6-name-one-owner',
+    name: 'Name one owner before it ships',
+    text: 'Leadership-driven causes are the largest category RAND’s 65 interviewees pointed to. A committee cannot be paged when a system starts drifting. Name one person, with the authority to change it, before launch.',
+  },
+  {
+    id: 'step-7-fund-the-route-to-production',
+    name: 'Fund the route to production before you fund the pilot',
+    text: 'IBM surveyed 2,000 CEOs and found that only 25% of AI initiatives had delivered the ROI expected of them, and only 16% had scaled enterprise wide. A pilot with no funded next step is a different project to a production system, and it stops the moment it succeeds.',
+  },
+  {
+    id: 'step-8-cap-the-spend-before-switch-on',
+    name: 'Cap the spend before you switch it on',
+    text: 'Escalating costs sit among the reasons Gartner gives for the abandonment it forecasts. Set a hard spending cap and an alert to a named person before the first deployment, not after the first invoice.',
+  },
+];
+
+const qa = [
+  {
+    q: 'Why does this checklist have eight steps rather than one score?',
+    a: 'Because the research names eight distinct, separable conditions rather than one variable: where the project came from, whether a metric and baseline exist, whether the data is reachable, what you are actually building, whether it fits an existing workflow, who owns it, whether production is funded, and whether spending is capped. Collapsing that into a single number is a different product, and this site publishes that one separately.',
+  },
+  {
+    q: 'Is this the same as the risk diagnostic on this site?',
+    a: 'The same eight factors. The checklist is the manual version: read it, work through it yourself, follow the citations. The diagnostic asks the same eight questions and returns a risk-factor load instead, which is useful when you want a number rather than a list to work through by hand.',
+  },
+  {
+    q: 'Why publish this ungated, when the pages that rank for this term put a spreadsheet behind an email form?',
+    a: 'Because the checklist and its sources are the entire product here. A gate would be a lead-capture mechanism dressed as a resource, and there is no consultancy or AI tool being sold to you afterwards.',
+  },
+  {
+    q: 'Which single step does the most work?',
+    a: 'Step 1 and step 6, on the same evidence. RAND found that 84% of its 65 interviewees pointed to a leadership-driven cause, and no later step fixes a project that began as a mandate rather than a response to a real problem, or one that nobody is accountable for once it ships.',
+  },
+  {
+    q: 'Do the tool links on this page earn you money?',
+    a: 'Not yet. The links to n8n, Make.com, DigitalOcean and Coursera may become affiliate links later, at no cost to you and with no change to the advice around them. Nobody paid for a mention today.',
+  },
+];
+
+const schema = [
+  breadcrumb([
+    { name: 'Home', path: '/' },
+    { name: 'AI implementation checklist', path },
+  ]),
+  faqPage(qa),
+  {
+    '@type': 'Article',
+    '@id': `${SITE.url}${path}#article`,
+    headline: h1,
+    description,
+    author: { '@id': personId },
+    publisher: { '@id': orgId },
+    datePublished: published,
+    dateModified: published,
+    mainEntityOfPage: `${SITE.url}${path}`,
+    citation: cited.map((s) => s.url),
+    isBasedOn: cited.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      datePublished: String(s.year),
+      url: s.url,
+    })),
+  },
+  {
+    '@type': 'HowTo',
+    '@id': `${SITE.url}${path}#howto`,
+    name: h1,
+    description,
+    step: steps.map((s) => ({
+      '@type': 'HowToStep',
+      name: s.name,
+      text: s.text,
+      url: `${SITE.url}${path}#${s.id}`,
+    })),
+  },
+];
+---
+
+<ArticleLayout
+  title={title}
+  description={description}
+  path={path}
+  h1={h1}
+  lead={lead}
+  datePublished={published}
+  dateModified={published}
+  schema={schema}
+  trail={[
+    { name: 'Home', path: '/' },
+    { name: 'AI implementation checklist', path },
+  ]}
+>
+  <div class="rail-body">
+    <h2 id="why-a-checklist">Why a checklist, not a framework</h2>
+    <p>
+      Search this term and most of what ranks is a downloadable spreadsheet sitting behind an email
+      address. That is a lead-capture form wearing a checklist's clothing, and it tells you who the
+      resource is really built for. Ours is on the page, in full, and nothing here sits behind an
+      email form.
+    </p>
+    <p>
+      Every step below exists because a named study found that the missing condition correlates with
+      an abandoned project or a return that failed to show up. None of it is house style or consultant
+      intuition, and where a source hedges its own number, we say so rather than smoothing it over.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <p>
+      <a href="/ai-project-risk-diagnostic" class="btn btn-primary">Run the scored version instead</a>
+      asks the same eight questions and returns a risk-factor load rather than a list to work through
+      by hand. Same studies, same sources, still nothing gated.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="step-1-name-the-problem">Step 1: Name the problem before you name the technology</h2>
+    <p>
+      Write the problem down in one sentence, without using the words AI, model or agent. RAND
+      interviewed <span class="num">65</span> data scientists, engineers and academics about why AI
+      projects fail, and <span class="num">84%</span> of them named a leadership-driven cause, most
+      often misunderstanding or miscommunicating what problem needed solving, as the primary reason.
+      That is what <span class="num">65</span> experts pointed to when asked, not an audit of how
+      failures actually happened, and it is still the strongest signal in the literature.
+    </p>
+    <p>
+      RAND's own advice, in its words, is to "focus on the problem, not the technology" and to "choose
+      enduring problems". It also names a subtler trap: applying AI to a problem too difficult for it
+      to solve, which is why its principles include "understand AI's limitations" alongside focusing
+      on the problem. If the sentence you wrote stops making sense once the AI is removed from it, you
+      have a mandate rather than a project, and no later step on this list fixes that.
+    </p>
+  </div>
+  <CitationChip source="rand-leadership" />
+
+  <div class="rail-body">
+    <h2 id="step-2-set-one-metric-and-its-baseline">Step 2: Set one metric, and record its baseline before you start</h2>
+    <p>
+      Gartner names unclear business value among the reasons it forecasts that at least
+      <span class="num">30%</span> of generative AI projects will be abandoned after proof of concept
+      by the end of 2025. That forecast is a prediction, not a measurement, but the mechanism behind it
+      is ordinary: nobody agreed what the project was meant to move, so nobody could later show that it
+      had.
+    </p>
+    <p>
+      Pick one metric before any work begins, and write down today's number against it. If nobody in
+      the room will commit to a figure, that reluctance is itself the finding, and it is far cheaper to
+      learn now than after the build.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="step-3-check-the-data-before-you-commit">Step 3: Check the data exists and is reachable before you commit budget</h2>
+    <p>
+      Poor data quality is the first reason Gartner names in the same forecast: at least
+      <span class="num">30%</span> of generative AI projects abandoned after proof of concept, due to
+      poor data quality, inadequate risk controls, escalating costs or unclear business value. RAND
+      separately lists an organisation lacking the necessary data among its root causes, and names
+      inadequate infrastructure to manage data and deploy models as another. Its advice is blunt:
+      "invest in infrastructure".
+    </p>
+    <p>
+      Spend a day with someone on the team actually querying the real data before a budget is signed
+      off. If a day is not enough to reach it, the project is a data project wearing an AI costume, and
+      it should be scoped, staffed and budgeted as one.
+    </p>
+  </div>
+  <CitationChip source="gartner-poc" />
+
+  <div class="rail-body">
+    <h2 id="step-4-decide-what-you-are-building">Step 4: Decide what you are actually building</h2>
+    <p>
+      MIT's Project NANDA looked at organisations evaluating custom or vendor-sold enterprise tools and
+      found that <span class="num">60%</span> evaluated one, <span class="num">20%</span> reached a
+      pilot, and only <span class="num">5%</span> reached production. General-purpose tools cross into
+      real use far more often. Buying or configuring something that already exists is not the
+      unambitious option, it is the one with better documented odds.
+    </p>
+    <p>
+      If the task genuinely is to assemble a workflow out of steps that already exist, rather than
+      write bespoke software, a no-code or low-code automation platform such as
+      <a href="https://n8n.io" data-aff="pending">n8n</a> or
+      <a href="https://www.make.com" data-aff="pending">Make.com</a> does that job without a custom
+      build. If the advice really does call for a custom wrapper around a vendor API, host it somewhere
+      plain and metered, such as
+      <a href="https://www.digitalocean.com" data-aff="pending">DigitalOcean</a>, rather than
+      over-provisioning for a pilot that has not proved itself yet.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="step-5-fit-it-into-a-workflow-people-already-run">Step 5: Fit it into a workflow people already run</h2>
+    <p>
+      MIT states the cause of its headline finding plainly: "the core barrier to scaling is not
+      infrastructure, regulation, or talent. It is learning." <span class="num">95%</span> of
+      organisations in its research were getting zero return from generative AI, and the pattern it
+      describes is tools that sit outside existing work rather than inside it. A tool that replaces a
+      step people already do daily gets used, and gets the feedback it needs to improve. A tool that
+      asks for a new tab, a new habit and a training session gets opened once.
+    </p>
+    <p>
+      Where a genuinely new workflow is unavoidable, budget for the learning MIT is describing rather
+      than assuming it happens by itself. A structured course, such as one on
+      <a href="https://www.coursera.org" data-aff="pending">Coursera</a>, is a cheaper way to close
+      that gap than discovering it through six months of low adoption.
+    </p>
+    <p class="mt-3 text-xs" style="color: var(--color-muted)">
+      A short disclosure on the four tool links above: they may become affiliate links later. That
+      would cost you nothing, change nothing about the advice around them, and nobody paid for a
+      mention today.
+    </p>
+  </div>
+  <CitationChip source="mit-nanda" />
+
+  <div class="rail-body">
+    <h2 id="step-6-name-one-owner">Step 6: Name one owner before it ships</h2>
+    <p>
+      Leadership-driven causes are the largest category RAND's <span class="num">65</span> interviewees
+      pointed to. A steering committee cannot be paged when a system starts drifting, and a working
+      group cannot be held to a number. Name one person, with the budget and the authority to change
+      the system, before it goes live. Not a team, and not a forum.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="step-7-fund-the-route-to-production">Step 7: Fund the route to production before you fund the pilot</h2>
+    <p>
+      IBM surveyed <span class="num">2,000</span> CEOs and found that only
+      <span class="num">25%</span> of AI initiatives had delivered the ROI expected of them, and only
+      <span class="num">16%</span> had scaled enterprise wide. A pilot with no funded next step is not
+      a smaller version of production, it is a different project, one that stops the moment it
+      succeeds.
+    </p>
+    <p>
+      Name the budget line and the person who owns the handover before the pilot starts, not after it
+      impresses everyone in the room.
+    </p>
+  </div>
+  <CitationChip source="ibm-ceo" />
+
+  <div class="rail-body">
+    <h2 id="step-8-cap-the-spend-before-switch-on">Step 8: Cap the spend before you switch it on</h2>
+    <p>
+      Escalating costs sit among the reasons Gartner gives for the abandonment it forecasts. Token and
+      compute spend does not behave like a licence fee: it scales with usage, with retries, and with
+      loops nobody planned for. Set a hard cap at the provider, and wire the alert to a named person
+      rather than a dashboard nobody watches, before the first deployment rather than after the first
+      invoice.
+    </p>
+
+    <h2 id="faq">Questions, answered from the sources</h2>
+    {
+      qa.map(({ q, a }) => (
+        <div class="mt-8">
+          <h3>{q}</h3>
+          <p class="mt-2">{a}</p>
+        </div>
+      ))
+    }
+
+    <hr class="my-10" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+    <p class="text-sm">
+      Related: what <a href="/ai-implementation-cost">AI implementation actually costs</a>, and why
+      nobody credible will give you a number for it. Back to
+      <a href="/">the reconciled failure figures</a>.
+    </p>
+  </div>
+</ArticleLayout>

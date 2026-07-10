@@ -1,0 +1,281 @@
+@import "tailwindcss";
+
+/*
+  implementai.today design system
+  Target: research instrument. Ink on warm paper, one burnt-sienna needle.
+  Rules that must not be broken:
+    1. Every number renders in tabular monospace, never in the body face.
+    2. No gradient mesh, no aurora blur, no glassmorphism, no pill-everything.
+    3. Corners stay near-sharp (2px). Surfaces stay opaque.
+*/
+
+@theme {
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
+
+  --color-bg: light-dark(#f3f0e9, #14130f);
+  --color-surface: light-dark(#faf8f2, #1e1c16);
+  --color-surface-2: light-dark(#ede8dc, #26231a);
+  --color-ink: light-dark(#17150f, #ece7d9);
+  --color-muted: light-dark(#6e685a, #9a9280);
+  --color-hairline: light-dark(#d8d2c4, #33302a);
+  --color-accent: light-dark(#a34e16, #e08a3c);
+  --color-accent-ink: light-dark(#faf8f2, #14130f);
+  --color-success: light-dark(#2f5d3a, #6fb07e);
+  --color-warn: light-dark(#8a6d00, #d6b24a);
+  --color-danger: light-dark(#8e2a1f, #d9705f);
+
+  --text-base: 1.0625rem;
+  --leading-base: 1.6;
+}
+
+:root {
+  color-scheme: light dark;
+}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.011em;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  h1 { font-size: clamp(2rem, 5vw, 3rem); }
+  h2 { font-size: 1.6875rem; }
+  h3 { font-size: 1.3125rem; }
+
+  p { text-wrap: pretty; }
+
+  a {
+    color: var(--color-accent);
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 1px;
+  }
+  a:hover { text-decoration-thickness: 2px; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+}
+
+/* ---------------------------------------------------------------
+   The signature rule: all figures are monospace and tabular.
+   Wrap every statistic in <span class="num">.
+   --------------------------------------------------------------- */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.01em;
+}
+.num-danger { color: var(--color-danger); font-weight: 600; }
+.num-success { color: var(--color-success); font-weight: 600; }
+.num-warn { color: var(--color-warn); font-weight: 600; }
+
+/* Overline / eyebrow */
+.overline {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+/* ---------------------------------------------------------------
+   Evidence rail: 66ch reading column + persistent citation margin.
+   Below 1180px the rail collapses and chips drop inline.
+   --------------------------------------------------------------- */
+.rail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 68ch);
+  gap: 0 2.5rem;
+  justify-content: center;
+}
+@media (min-width: 1180px) {
+  .rail-grid {
+    grid-template-columns: minmax(0, 68ch) 19rem;
+    justify-content: center;
+  }
+  .rail-grid > .rail-note {
+    grid-column: 2;
+    align-self: start;
+    margin-top: 0.2rem;
+  }
+  .rail-grid > .rail-body { grid-column: 1; }
+}
+.rail-note { min-width: 0; }
+@media (max-width: 1179px) {
+  .rail-note { margin: 1rem 0 1.5rem; }
+}
+
+/* ---------------------------------------------------------------
+   Citation chip: the trust mechanism and the core visual motif.
+   --------------------------------------------------------------- */
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-hairline);
+  border-left: 2px solid var(--color-accent);
+  border-radius: 2px;
+  padding: 0.625rem 0.75rem;
+  display: block;
+}
+.chip-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+.chip-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.chip-dot--verified { background: var(--color-success); }
+.chip-dot--contested { background: var(--color-warn); }
+.chip-dot--blocked { background: var(--color-danger); }
+.chip-rule {
+  height: 1px;
+  background: var(--color-hairline);
+  margin: 0.5rem 0;
+  border: 0;
+}
+.chip-row { color: var(--color-muted); }
+.chip-row b { color: var(--color-ink); font-weight: 600; }
+.chip a { word-break: break-word; }
+
+/* Prose: deliberately hand-rolled, no typography plugin. */
+.prose > * + * { margin-top: 1.15em; }
+/* Inside the evidence rail the flow lives one level down, in .rail-body. */
+.prose .rail-body > * + * { margin-top: 1.15em; }
+.prose h2 { margin-top: 2.75rem; margin-bottom: 0.75rem; scroll-margin-top: 5rem; }
+.prose h3 { margin-top: 2rem; margin-bottom: 0.5rem; scroll-margin-top: 5rem; }
+.prose ul, .prose ol { padding-left: 1.25rem; }
+.prose li + li { margin-top: 0.4rem; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose strong { font-weight: 650; }
+.prose .lead { font-size: 1.25rem; line-height: 1.5; color: var(--color-ink); }
+
+/* Data tables: instrument readouts, horizontally scrollable. */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-hairline);
+  border-radius: 2px;
+  background: var(--color-surface);
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 40rem;
+}
+.data-table caption {
+  caption-side: top;
+  text-align: left;
+  padding: 0.75rem 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  border-bottom: 1px solid var(--color-hairline);
+}
+.data-table th, .data-table td {
+  padding: 0.625rem 0.875rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--color-hairline);
+}
+.data-table thead th {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.data-table tbody tr:last-child td { border-bottom: 0; }
+.data-table td.figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Buttons: sharp, opaque, no pill. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6875rem 1.125rem;
+  border-radius: 2px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+.btn-primary:hover { background: light-dark(#8c4212, #eda054); }
+.btn-secondary {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-hairline);
+}
+.btn-secondary:hover { border-color: var(--color-accent); }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+}
+.skip-link:focus {
+  left: 1rem; top: 1rem;
+  z-index: 100;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  padding: 0.6rem 1rem;
+  border-radius: 2px;
+}

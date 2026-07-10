@@ -1,0 +1,75 @@
+---
+import Base from './Base.astro';
+import { SITE } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  h1: string;
+  /** The 2-3 sentence extractable answer to the head query. Sits directly under the H1. */
+  lead: string;
+  datePublished: string;
+  dateModified: string;
+  schema?: unknown[];
+  trail: { name: string; path: string }[];
+}
+
+const { title, description, path, h1, lead, datePublished, dateModified, schema = [], trail } =
+  Astro.props;
+---
+
+<Base title={title} description={description} path={path} schema={schema}>
+  <div class="mx-auto max-w-6xl px-4 pt-8">
+    <nav aria-label="Breadcrumb">
+      <ol class="flex flex-wrap items-center gap-2 text-xs" style="font-family: var(--font-mono); color: var(--color-muted)">
+        {
+          trail.map((t, i) => (
+            <li class="flex items-center gap-2">
+              {i > 0 && <span aria-hidden="true">/</span>}
+              {i === trail.length - 1 ? (
+                <span aria-current="page">{t.name}</span>
+              ) : (
+                <a href={t.path} style="color: var(--color-muted)">{t.name}</a>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+  </div>
+
+  <article class="mx-auto max-w-6xl px-4 py-10">
+    <header class="rail-grid">
+      <div class="rail-body">
+        <h1>{h1}</h1>
+        <p class="lead mt-5" style="color: var(--color-ink)">{lead}</p>
+
+        <p class="mt-6 text-xs" style="font-family: var(--font-mono); color: var(--color-muted)">
+          By <a href="/about">{SITE.author.name}</a>
+          <span aria-hidden="true"> &middot; </span>
+          published <time datetime={datePublished} class="num">{datePublished}</time>
+          <span aria-hidden="true"> &middot; </span>
+          figures last checked <time datetime={dateModified} class="num">{dateModified}</time>
+        </p>
+      </div>
+    </header>
+
+    <hr class="my-10" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+
+    <div class="rail-grid prose">
+      <slot />
+    </div>
+
+    <footer class="rail-grid mt-16">
+      <div class="rail-body border-t pt-6" style="border-color: var(--color-hairline)">
+        <p class="overline">Standing disclosure</p>
+        <p class="mt-2 text-sm" style="color: var(--color-muted)">{SITE.disclosure}</p>
+        <p class="mt-4 text-sm">
+          <a href="/ai-project-risk-diagnostic">Check your own project against these factors</a> with the
+          free diagnostic. No sign-up, nothing stored.
+        </p>
+      </div>
+    </footer>
+  </article>
+</Base>

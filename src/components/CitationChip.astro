@@ -1,0 +1,72 @@
+---
+import type { Source } from '../lib/types';
+import { getSource } from '../lib/sources';
+
+interface Props {
+  /** Source id, or a Source object directly. */
+  source: string | Source;
+  /** Optional override when a page quotes a different figure from the same study. */
+  metric?: string;
+}
+
+const { source, metric } = Astro.props;
+const s: Source = typeof source === 'string' ? getSource(source) : source;
+
+const dotClass = {
+  verified: 'chip-dot--verified',
+  contested: 'chip-dot--contested',
+  blocked: 'chip-dot--blocked',
+}[s.status];
+
+const statusLabel = {
+  verified: 'Primary source read',
+  contested: 'Contested or predicted figure',
+  blocked: 'Primary source blocked, quoted via secondary',
+}[s.status];
+
+const readUrl = s.status === 'blocked' && s.secondaryUrl ? s.secondaryUrl : s.url;
+---
+
+<aside class="chip rail-note" aria-label={`Source: ${s.org}, ${s.year}`}>
+  <div class="chip-head">
+    <span class={`chip-dot ${dotClass}`} role="img" aria-label={statusLabel}></span>
+    <span>{s.org}</span>
+    <span aria-hidden="true">&middot;</span>
+    <span class="num">{s.year}</span>
+  </div>
+
+  <hr class="chip-rule" />
+
+  <p class="chip-row"><b>{metric ?? s.metric}</b></p>
+
+  <p class="chip-row">
+    n = {s.sample ? <span class="num">{s.sample}</span> : <em>not stated in accessible sources</em>}
+  </p>
+
+  <p class="chip-row">method: {s.method}</p>
+
+  {s.access && <p class="chip-row">{s.access}</p>}
+
+  <hr class="chip-rule" />
+
+  <p class="chip-row">
+    <a href={readUrl} rel="noopener nofollow" target="_blank">
+      {s.title} <span aria-hidden="true">&#8599;</span>
+      <span class="sr-only">(opens in a new tab)</span>
+    </a>
+  </p>
+
+  <p class="chip-row">last checked <span class="num">{s.lastVerified}</span></p>
+</aside>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

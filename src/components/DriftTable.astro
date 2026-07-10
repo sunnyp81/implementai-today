@@ -1,0 +1,38 @@
+---
+import { DRIFTED } from '../lib/sources';
+---
+
+<div class="table-wrap">
+  <table class="data-table">
+    <caption>
+      Figures on this site whose circulating version differs from the primary source. Checked
+      2026-07-10.
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">What circulates</th>
+        <th scope="col">What the source actually says</th>
+        <th scope="col">Source</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        DRIFTED.map((s) => (
+          <tr>
+            <td style="color: var(--color-danger)">{s.drift!.circulates}</td>
+            <td>{s.drift!.actually}</td>
+            <td class="figure">
+              <a href={s.url} rel="noopener nofollow" target="_blank">
+                {s.org} {s.year}
+              </a>
+              <br />
+              <span style="color: var(--color-muted); font-size: 0.6875rem">
+                {s.sample ? `n=${s.sample}` : 'no sample published'}
+              </span>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>

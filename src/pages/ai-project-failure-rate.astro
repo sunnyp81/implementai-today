@@ -1,0 +1,312 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import CitationChip from '../components/CitationChip.astro';
+import DriftTable from '../components/DriftTable.astro';
+import { SITE, breadcrumb, faqPage, orgId, personId } from '../lib/site';
+import { SOURCES, DRIFTED, getSource } from '../lib/sources';
+
+const path = '/ai-project-failure-rate';
+const title = 'AI project failure rate: what the studies actually say | implementai.today';
+const description =
+  'Estimates range from more than 80% (RAND) to 95% of organisations seeing zero return (MIT). They are not the same measurement. We reconcile all of them, and show which widely quoted figures were never published.';
+
+const h1 = 'The AI project failure rate, reconciled to its sources';
+
+const lead =
+  'AI project failure estimates range from more than 80% of projects (RAND, 2024) to 95% of organisations getting zero return from generative AI (MIT, 2025), while BCG found only 5% of companies achieving value at scale. These figures are not in conflict and they are not comparable: they count different things, over different populations, and two of the most quoted are forecasts rather than measurements.';
+
+const published = '2026-07-10';
+
+const rows = [
+  {
+    id: 'rand-failure',
+    unit: 'projects',
+    measures: 'Projects that fail. RAND is quoting other estimates, hence "by some estimates".',
+  },
+  {
+    id: 'mit-nanda',
+    unit: 'organisations',
+    measures: 'Organisations getting zero return from generative AI. Not projects, and not "pilots failing".',
+  },
+  {
+    id: 'gartner-poc',
+    unit: 'projects (forecast)',
+    measures: 'A prediction, issued in 2024, about what would be true by the end of 2025.',
+  },
+  {
+    id: 'gartner-agentic',
+    unit: 'projects (forecast)',
+    measures: 'A prediction, issued in 2025, about what will be true by the end of 2027.',
+  },
+  {
+    id: 'bcg-value-gap',
+    unit: 'companies',
+    measures: 'Companies achieving AI value at scale. A maturity classification, not a project outcome.',
+  },
+  {
+    id: 'ibm-ceo',
+    unit: 'initiatives',
+    measures: 'Initiatives judged against the ROI their own CEOs expected of them. Self-reported.',
+  },
+  {
+    id: 'mckinsey-state-of-ai',
+    unit: 'organisations',
+    measures: 'Organisations that have fully scaled AI, and those reporting enterprise EBIT impact.',
+  },
+  {
+    id: 'deloitte-roi',
+    unit: 'organisations',
+    measures: 'Organisations already growing revenue through AI, against those hoping to.',
+  },
+];
+
+const qa = [
+  {
+    q: 'What percentage of AI projects fail?',
+    a: 'RAND wrote in 2024 that, by some estimates, more than 80% of AI projects fail, about twice the rate of non-AI IT projects. That is the most defensible answer to the question as asked. The widely repeated figure of 80.3% appears in no study, and the four-way breakdown often attributed to RAND was never published by RAND.',
+  },
+  {
+    q: 'Why do the estimates differ so much, from 80% to 95% to 5%?',
+    a: 'Because they measure different things. RAND counts projects that fail. MIT counts organisations getting zero return from generative AI. BCG classifies companies by maturity, finding 5% achieve value at scale. IBM asks CEOs whether initiatives met the ROI expected of them. Comparing these numbers to one another is a category error.',
+  },
+  {
+    q: 'Which figure is most reliable?',
+    a: 'For the question "do AI projects fail more than other IT projects", RAND, because it is the only source addressing that comparison directly, and it says roughly twice as often. For anything about generative AI specifically, treat every figure as contested: the most cited one is not peer reviewed and is not hosted on an MIT domain despite being universally called an MIT report.',
+  },
+  {
+    q: 'Is the 30% Gartner figure a measurement?',
+    a: 'No. It is a forecast published in July 2024 predicting that at least 30% of generative AI projects would be abandoned after proof of concept by the end of 2025. Gartner measured nothing. Its 40% agentic AI figure is likewise a forecast, about 2027.',
+  },
+  {
+    q: 'Do AI projects fail more often than other IT projects?',
+    a: 'RAND says so: more than 80% of AI projects fail, which it describes as twice the failure rate of information technology projects that do not involve AI. This is the single clearest comparative claim in the literature, and it is a hedged estimate rather than a measurement RAND performed.',
+  },
+];
+
+const schema = [
+  breadcrumb([
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path: '/why-ai-projects-fail' },
+    { name: 'AI project failure rate', path },
+  ]),
+  faqPage(qa),
+  {
+    '@type': 'Article',
+    '@id': `${SITE.url}${path}#article`,
+    headline: h1,
+    description,
+    author: { '@id': personId },
+    publisher: { '@id': orgId },
+    datePublished: published,
+    dateModified: published,
+    mainEntityOfPage: `${SITE.url}${path}`,
+    citation: SOURCES.map((s) => s.url),
+    isBasedOn: SOURCES.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      datePublished: String(s.year),
+      url: s.url,
+    })),
+  },
+  {
+    '@type': 'Dataset',
+    '@id': `${SITE.url}${path}#dataset`,
+    name: 'AI project failure and adoption figures, reconciled to primary sources',
+    description:
+      'A compilation of published AI failure and adoption figures with the exact wording of each source, its sample, its method, and a record of where the commonly circulated version departs from the original. implementai.today ran no research of its own.',
+    creator: { '@id': orgId },
+    isAccessibleForFree: true,
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    temporalCoverage: '2024/2026',
+    measurementTechnique: 'compilation of published survey, research report and analyst forecast findings',
+    citation: SOURCES.map((s) => s.url),
+    isBasedOn: SOURCES.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      url: s.url,
+    })),
+    variableMeasured: SOURCES.map((s) => ({
+      '@type': 'PropertyValue',
+      name: `${s.org} ${s.year}`,
+      value: s.metric,
+      measurementTechnique: s.method,
+    })),
+    distribution: {
+      '@type': 'DataDownload',
+      encodingFormat: 'application/json',
+      contentUrl: `${SITE.url}/data/ai-failure-rates.json`,
+    },
+  },
+];
+---
+
+<ArticleLayout
+  title={title}
+  description={description}
+  path={path}
+  h1={h1}
+  lead={lead}
+  datePublished={published}
+  dateModified={published}
+  schema={schema}
+  trail={[
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path: '/why-ai-projects-fail' },
+    { name: 'Failure rate', path },
+  ]}
+>
+  <div class="rail-body">
+    <h2 id="the-number">The number, and what it is a number of</h2>
+    <p>
+      Asked plainly, the best-supported answer is RAND's: by some estimates, more than 80% of AI
+      projects fail, roughly twice the rate of IT projects that do not involve AI. Notice how much
+      hedging survives in that sentence. RAND is not reporting its own count. It is characterising
+      other people's estimates, in a report whose actual method was
+      <span class="num">65</span> semi-structured interviews.
+    </p>
+    <p>
+      That hedge does not survive contact with the internet. The figure you have almost certainly
+      seen is <span class="num num-danger">80.3%</span>, complete with a decimal place, often
+      accompanied by a tidy four-way breakdown of outcomes that sums to exactly
+      <span class="num">100.0%</span>. Neither appears anywhere in RAND's report. We looked.
+    </p>
+  </div>
+  <CitationChip source="rand-failure" />
+
+  <div class="rail-body">
+    <h2 id="reconciliation">Why the estimates disagree</h2>
+    <p>
+      They do not, really. They are answers to different questions, and they are routinely stacked
+      against each other as though they were rival measurements of the same thing. Here is every
+      headline figure in this field, next to what it actually counts.
+    </p>
+  </div>
+
+  <div class="rail-body my-6">
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption>Headline AI failure and value figures, and the unit each one counts</caption>
+        <thead>
+          <tr>
+            <th scope="col">Source</th>
+            <th scope="col">The figure, in its own words</th>
+            <th scope="col">Unit counted</th>
+            <th scope="col">What it actually measures</th>
+            <th scope="col">Sample</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((r) => {
+              const s = getSource(r.id);
+              return (
+                <tr>
+                  <td class="figure">
+                    <a href={s.url} rel="noopener nofollow" target="_blank">{s.org}</a> {s.year}
+                  </td>
+                  <td>{s.metric}</td>
+                  <td class="figure">{r.unit}</td>
+                  <td>{r.measures}</td>
+                  <td class="figure">{s.sample ?? 'not published'}</td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-3 text-xs" style="color: var(--color-muted)">
+      Compiled by implementai.today from the sources named. We ran no survey. Machine-readable version:
+      <a href="/data/ai-failure-rates.json">/data/ai-failure-rates.json</a>.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <p>
+      Three distinctions do most of the work. <strong>Projects are not organisations.</strong> RAND
+      counts projects; MIT and BCG count companies. A company can run five AI projects, fail four, and
+      still appear in the successful 5%. <strong>Failure is not the absence of return.</strong> A
+      project can ship, work, and still show nothing on the profit and loss statement, which is what
+      MIT's 95% describes. And <strong>a forecast is not a measurement.</strong> Both Gartner figures
+      are predictions, written before the years they describe.
+    </p>
+  </div>
+  <CitationChip source="mit-nanda" />
+
+  <div class="rail-body">
+    <h2 id="drift">The figures that were never published</h2>
+    <p>
+      This is the part nobody else does. Of the <span class="num">{SOURCES.length}</span> sources this
+      site cites, <span class="num num-danger">{DRIFTED.length}</span> circulate in a form the original
+      does not support. Some of the drift is trivial. Some of it is invention.
+    </p>
+    <p>
+      The mechanism is worth understanding, because it will keep happening. Primary sources block
+      automated readers: <code>rand.org</code>, <code>gartner.com</code> and <code>hbr.org</code> all
+      return an error to anything that is not a browser. So the AI assistants and content mills that
+      quote them cannot actually read them. They quote each other instead, and precision accretes with
+      every hop. A hedge becomes a number. A number acquires a decimal. An opinion survey of
+      <span class="num">65</span> people becomes an audit of an industry.
+    </p>
+  </div>
+
+  <div class="rail-body my-6">
+    <DriftTable />
+  </div>
+
+  <div class="rail-body">
+    <h3>The 84% that means something narrower than you think</h3>
+    <p>
+      Worth dwelling on, because it is the most instructive case. RAND's report contains the sentence:
+      <em>
+        "Eighty-four percent of our interviewees cited one or more of these root causes as the primary
+        reason that AI projects would fail."
+      </em>
+      Those root causes are the leadership-driven ones. So the honest gloss is that
+      <span class="num">84%</span> of <span class="num">65</span> interviewed experts pointed at
+      leadership. That is a survey of opinion, and a small one. It is not a finding that 84% of real
+      failures were caused by leadership, which is how it now travels.
+    </p>
+    <p>
+      Then it gets worse. The same report contains a <em>second</em> 84%, drawn from the Cisco AI
+      Readiness Index, describing business leaders who believe AI will significantly affect their
+      business. Two unrelated 84% figures, one document. You can watch the confusion form.
+    </p>
+  </div>
+  <CitationChip source="rand-leadership" />
+
+  <div class="rail-body">
+    <h2 id="what-to-do">What to do with this</h2>
+    <p>
+      If you are building a business case, quote RAND for the comparative claim (AI projects fail about
+      twice as often as other IT projects) and quote nothing to two significant figures. If someone
+      hands you a deck with 80.3% on it, you now know they did not read the source, and you can
+      reasonably ask what else in the deck came from a content mill.
+    </p>
+    <p>
+      And if you want to know whether your own project carries the conditions these studies keep
+      finding, the <a href="/ai-project-risk-diagnostic">free diagnostic</a> walks the eight factors,
+      showing which study each one comes from. It cannot predict anything. Nothing can. It can tell you
+      which of the documented risks you are currently carrying.
+    </p>
+
+    <h2 id="faq">Questions, answered from the sources</h2>
+    {
+      qa.map(({ q, a }) => (
+        <div class="mt-8">
+          <h3>{q}</h3>
+          <p class="mt-2">{a}</p>
+        </div>
+      ))
+    }
+
+    <hr class="my-10" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+    <p class="text-sm">
+      Related: <a href="/why-ai-projects-fail">why AI projects fail</a>, the causes rather than the
+      count. And <a href="/ai-adoption-statistics">AI adoption statistics</a>, where the UK numbers
+      disagree with each other by a factor of two.
+    </p>
+  </div>
+</ArticleLayout>

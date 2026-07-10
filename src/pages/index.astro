@@ -1,0 +1,197 @@
+---
+import Base from '../layouts/Base.astro';
+import CitationChip from '../components/CitationChip.astro';
+import { SITE, identityGraph, breadcrumb, faqPage, orgId } from '../lib/site';
+import { SOURCES, DRIFTED } from '../lib/sources';
+
+const path = '/';
+const title = 'Why AI projects fail, and what AI implementation costs | implementai.today';
+const description =
+  'The most quoted statistic about AI failure was never published by anyone. We check every figure against its primary source, show the sample and the method, and give you a free diagnostic to test your own project.';
+
+const qa = [
+  {
+    q: 'What percentage of AI projects fail?',
+    a: 'RAND reported in 2024 that, by some estimates, more than 80% of AI projects fail, about twice the rate of non-AI IT projects. It publishes no more precise figure, and the widely repeated "80.3%" appears in no study. MIT reported separately in 2025 that 95% of organisations were getting zero return from generative AI. The two measure different things.',
+  },
+  {
+    q: 'Why do most AI projects fail?',
+    a: 'RAND interviewed 65 data scientists and engineers and concluded the root causes are overwhelmingly leadership and organisational rather than technical. Gartner names poor data quality, inadequate risk controls, escalating costs and unclear business value in its forecasts of abandonment.',
+  },
+  {
+    q: 'Can I check whether my own project is at risk?',
+    a: 'Yes. This site publishes a free diagnostic that scores a project against the factors named in the published studies. It is not a validated statistical model, it stores nothing, and it requires no sign-up.',
+  },
+];
+
+const schema = [
+  ...identityGraph(),
+  breadcrumb([{ name: 'Home', path: '/' }]),
+  faqPage(qa),
+  {
+    '@type': 'WebPage',
+    '@id': `${SITE.url}/#webpage`,
+    url: SITE.url,
+    name: title,
+    description,
+    isPartOf: { '@id': `${SITE.url}/#website` },
+    publisher: { '@id': orgId },
+  },
+];
+---
+
+<Base title={title} description={description} path={path} schema={schema}>
+  <!-- Hero: the number everyone quotes, and the fact that nobody published it. -->
+  <section class="border-b" style="border-color: var(--color-hairline)">
+    <div class="mx-auto grid max-w-6xl gap-12 px-4 py-16 lg:grid-cols-[1.15fr_1fr] lg:py-24">
+      <div>
+        <p class="overline">Primary sources. Methodology shown.</p>
+
+        <h1 class="mt-4">Why AI projects fail, and what AI implementation really costs</h1>
+
+        <p class="lead mt-6" style="max-width: 60ch">
+          The most quoted statistic in this field is that <span class="num">80.3%</span> of AI projects
+          fail. No study says that. RAND wrote <em>&ldquo;by some estimates, more than 80 percent&rdquo;</em>,
+          and the decimal was added somewhere downstream.
+        </p>
+
+        <p class="mt-4" style="max-width: 60ch; color: var(--color-muted)">
+          We checked every figure on this site against the document it came from. Of
+          <span class="num">{SOURCES.length}</span> sources, <span class="num num-danger">{DRIFTED.length}</span>
+          are routinely misquoted in ways we could verify against the original, including one breakdown,
+          widely credited to RAND, that RAND never published.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/ai-project-risk-diagnostic" class="btn btn-primary">Run the free diagnostic</a>
+          <a href="/ai-project-failure-rate" class="btn btn-secondary">See what the research says</a>
+        </div>
+
+        <p class="mt-5 text-xs" style="color: var(--color-muted)">
+          No sign-up. Nothing stored. Nothing to buy.
+        </p>
+      </div>
+
+      <!-- The drift, made visual. This is the site in one card. -->
+      <div>
+        <figure
+          class="border p-6"
+          style="border-color: var(--color-hairline); background: var(--color-surface); border-radius: 2px"
+        >
+          <figcaption class="overline">The figure as it circulates</figcaption>
+          <p
+            class="num mt-2"
+            style="font-size: 3.25rem; line-height: 1; color: var(--color-danger); text-decoration: line-through; text-decoration-thickness: 3px"
+          >
+            80.3%
+          </p>
+
+          <hr class="my-5" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+
+          <p class="overline">What RAND actually wrote</p>
+          <p class="mt-2" style="font-family: var(--font-serif); font-size: 1.375rem; line-height: 1.35">
+            &ldquo;By some estimates, <strong>more than 80 percent</strong> of AI projects fail,
+            twice the rate of failure for information technology projects that do not involve
+            AI.&rdquo;
+          </p>
+          <p class="mt-3 text-xs" style="color: var(--color-muted)">
+            RAND, 2024. Punctuation normalised, wording unchanged.
+          </p>
+        </figure>
+
+        <div class="mt-4">
+          <CitationChip source="rand-failure" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What this site is -->
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <div class="grid gap-10 md:grid-cols-3">
+      <div>
+        <p class="overline">01 &middot; Sources, not summaries</p>
+        <h2 class="mt-2" style="font-size: 1.3125rem">Every number carries its scaffolding</h2>
+        <p class="mt-3 text-sm" style="color: var(--color-muted)">
+          Sample size, method, fieldwork window, and a link, pinned in the margin beside the claim.
+          Where a study publishes no sample, we say so instead of inventing one.
+        </p>
+      </div>
+      <div>
+        <p class="overline">02 &middot; Predictions are labelled</p>
+        <h2 class="mt-2" style="font-size: 1.3125rem">A forecast is not a measurement</h2>
+        <p class="mt-3 text-sm" style="color: var(--color-muted)">
+          Two of the most repeated AI failure figures are Gartner forecasts about years that had not
+          happened yet when they were written. They get an amber dot, not a headline.
+        </p>
+      </div>
+      <div>
+        <p class="overline">03 &middot; Nothing to sell</p>
+        <h2 class="mt-2" style="font-size: 1.3125rem">No consultancy, no gate, no call</h2>
+        <p class="mt-3 text-sm" style="color: var(--color-muted)">
+          {SITE.disclosure}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Start here -->
+  <section class="border-t" style="border-color: var(--color-hairline)">
+    <div class="mx-auto max-w-6xl px-4 py-16">
+      <p class="overline">Start here</p>
+      <h2 class="mt-2">The four questions people actually ask</h2>
+
+      <div class="mt-8 grid gap-px" style="background: var(--color-hairline)">
+        {
+          [
+            {
+              href: '/ai-project-failure-rate',
+              q: 'What percentage of AI projects fail?',
+              a: 'The honest answer needs four studies reconciled, because each measures something different. One of the four numbers you have seen does not exist.',
+            },
+            {
+              href: '/why-ai-projects-fail',
+              q: 'Why do they fail?',
+              a: 'RAND puts the causes in leadership and organisation, not technology. It attaches no percentage, whatever you have read.',
+            },
+            {
+              href: '/ai-implementation-cost',
+              q: 'What does it cost?',
+              a: 'Nobody credible publishes a figure. The ranges you have seen are agency marketing. Here is what is actually documented.',
+            },
+            {
+              href: '/ai-project-risk-diagnostic',
+              q: 'Will mine fail?',
+              a: 'No tool can tell you that, and any that claims to is lying. This one checks your project against the factors the studies named.',
+            },
+          ].map((item) => (
+            <a
+              href={item.href}
+              class="block p-6 no-underline"
+              style="background: var(--color-bg); color: var(--color-ink)"
+            >
+              <h3 style="font-size: 1.1875rem; color: var(--color-accent)">{item.q}</h3>
+              <p class="mt-2 text-sm" style="color: var(--color-muted)">{item.a}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ, extractable -->
+  <section class="border-t" style="border-color: var(--color-hairline)">
+    <div class="mx-auto max-w-3xl px-4 py-16 prose">
+      <p class="overline">Answers</p>
+      <h2 class="mt-2">Questions, answered from the sources</h2>
+      {
+        qa.map(({ q, a }) => (
+          <div class="mt-8">
+            <h3>{q}</h3>
+            <p class="mt-2">{a}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</Base>

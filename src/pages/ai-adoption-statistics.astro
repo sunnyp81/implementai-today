@@ -1,0 +1,411 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import CitationChip from '../components/CitationChip.astro';
+import { SITE, breadcrumb, faqPage, orgId, personId } from '../lib/site';
+import { getSource } from '../lib/sources';
+
+const path = '/ai-adoption-statistics';
+const title = 'AI adoption statistics, and why they disagree | implementai.today';
+const description =
+  'UK surveys put AI adoption at 16% (DSIT), 25% (ONS) and 35% (British Chambers of Commerce), covering roughly the same period. None are wrong: they sample different businesses and ask different questions. We reconcile all three, plus the size gradient and the value gap the headlines skip.';
+
+const h1 = 'AI adoption statistics, reconciled';
+
+const lead =
+  'Ask what percentage of businesses use AI and the honest answer is a range, not a number: 16% (DSIT), 25% (ONS) and 35% (British Chambers of Commerce), three UK surveys fielded across roughly the same year. All three are correct. They sampled different businesses, by different methods, and asked a different question about what counts as using AI.';
+
+const published = '2026-07-10';
+
+// The seven sources this page cites in schema and prose.
+const CITED_IDS = [
+  'dsit-uk',
+  'ons-bics',
+  'bcc-intuit',
+  'census-btos',
+  'mckinsey-state-of-ai',
+  'bcg-value-gap',
+  'ibm-ceo',
+] as const;
+const cited = CITED_IDS.map(getSource);
+
+const ukRows = [
+  {
+    id: 'dsit-uk',
+    who: 'UK businesses with 5 or more employees, by telephone, plus 100 qualitative interviews',
+    fieldwork: '12 February to 2 May 2025',
+    whyDiffers:
+      'Excludes businesses under 5 employees, which is most UK businesses by count. The narrowest sample of the three, and the lowest figure.',
+  },
+  {
+    id: 'ons-bics',
+    who: 'the BICS business panel, a national statistics survey',
+    fieldwork: '15 to 28 December 2025',
+    whyDiffers:
+      "A wider panel than DSIT's, fielded seven months later, over a period ONS's own trend line shows adoption climbing.",
+  },
+  {
+    id: 'bcc-intuit',
+    who: 'British Chambers of Commerce members, surveyed online with Intuit QuickBooks',
+    fieldwork: 'June to July 2025',
+    whyDiffers:
+      'Surveys only Chamber members, who the release itself describes as more AI forward than UK businesses generally. The least representative sample, and the highest figure.',
+  },
+];
+
+const sizeRows = [
+  { id: 'dsit-uk', smallest: 'Micro: 14%', largest: 'Large: 36%' },
+  {
+    id: 'ons-bics',
+    smallest: 'not broken out below 250+ employees in the published bulletin',
+    largest: '250+ employees: 44%',
+  },
+  { id: 'census-btos', smallest: 'Four or fewer employees: under 20%', largest: '250+ employees: 37%' },
+];
+
+const driftIds = ['ons-bics', 'bcg-value-gap', 'mckinsey-state-of-ai'] as const;
+
+const qa = [
+  {
+    q: 'What percentage of businesses use AI?',
+    a: 'There is no single figure. UK surveys taken across roughly the same year report 16% (DSIT), 25% (ONS) and 35% (British Chambers of Commerce). The US Census Bureau\'s Business Trends and Outlook Survey put overall usage between 17% and 20% from December 2025 to May 2026. All of these can be correct at once, because none of them measure the same population or ask the same question.',
+  },
+  {
+    q: 'What is UK AI adoption?',
+    a: "Depends which survey you read. DSIT's telephone survey of 3,500 businesses with 5 or more employees found 16% use at least one AI technology. ONS's Business Insights and Conditions Survey, fieldwork 15 to 28 December 2025, put it at 25%, rising to 44% among businesses with 250+ employees. The British Chambers of Commerce, surveying its own members with Intuit QuickBooks, found 35% of SMEs actively using AI.",
+  },
+  {
+    q: 'Why do the numbers differ so much?',
+    a: "Different samples and different questions. DSIT excludes businesses under 5 employees, which is most UK businesses, and asks about any AI technology. ONS surveys a wider national panel and asks about current use. The British Chambers of Commerce surveys only its own members, whom its own release describes as more AI forward than UK businesses generally, and asks about active use. A higher or lower figure does not mean a survey is wrong. It means it counted a different group.",
+  },
+  {
+    q: 'How many companies have actually scaled AI?',
+    a: "Far fewer than the adoption figures suggest. McKinsey's 2025 global survey found 88% of organisations use AI in at least one function, but only 7% have fully scaled it. BCG's 2025 executive survey put companies achieving AI value at scale at 5%, with 60% achieving no material value at all. IBM's CEO study found only 25% of AI initiatives delivered the ROI their own CEOs expected, and just 16% had scaled enterprise wide.",
+  },
+  {
+    q: 'Are small businesses using AI?',
+    a: "At roughly half the rate of large ones, in every survey that breaks out firm size. DSIT found 14% adoption among micro businesses against 36% among large ones. The US Census Bureau's Business Trends and Outlook Survey found under 20% adoption among firms with four or fewer employees against 37% for firms with 250 or more. ONS does not publish a smallest-firm figure, but its 44% rate for businesses with 250+ employees follows the same pattern.",
+  },
+];
+
+const schema = [
+  breadcrumb([
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path: '/why-ai-projects-fail' },
+    { name: 'AI adoption statistics', path },
+  ]),
+  faqPage(qa),
+  {
+    '@type': 'Article',
+    '@id': `${SITE.url}${path}#article`,
+    headline: h1,
+    description,
+    author: { '@id': personId },
+    publisher: { '@id': orgId },
+    datePublished: published,
+    dateModified: published,
+    mainEntityOfPage: `${SITE.url}${path}`,
+    citation: cited.map((s) => s.url),
+    isBasedOn: cited.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      datePublished: String(s.year),
+      url: s.url,
+    })),
+  },
+  {
+    '@type': 'Dataset',
+    '@id': `${SITE.url}${path}#dataset`,
+    name: 'AI adoption rates by survey, 2025 to 2026',
+    description:
+      'A compilation of published AI adoption figures from UK and US national statistics and business surveys, with the exact wording, sample and fieldwork window of each, and a record of where the commonly circulated version departs from the original. implementai.today ran no research of its own.',
+    creator: { '@id': orgId },
+    isAccessibleForFree: true,
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    temporalCoverage: '2025/2026',
+    measurementTechnique: 'compilation of published national statistics and survey findings',
+    citation: cited.map((s) => s.url),
+    isBasedOn: cited.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      url: s.url,
+    })),
+    variableMeasured: cited.map((s) => ({
+      '@type': 'PropertyValue',
+      name: `${s.org} ${s.year}`,
+      value: s.metric,
+      measurementTechnique: s.method,
+    })),
+    distribution: {
+      '@type': 'DataDownload',
+      encodingFormat: 'application/json',
+      contentUrl: `${SITE.url}/data/ai-failure-rates.json`,
+    },
+  },
+];
+---
+
+<ArticleLayout
+  title={title}
+  description={description}
+  path={path}
+  h1={h1}
+  lead={lead}
+  datePublished={published}
+  dateModified={published}
+  schema={schema}
+  trail={[
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path: '/why-ai-projects-fail' },
+    { name: 'AI adoption statistics', path },
+  ]}
+>
+  <div class="rail-body">
+    <h2 id="the-honest-answer">The honest answer, and why it moves</h2>
+    <p>
+      Ask what percentage of businesses use AI and you can produce almost any figure between one in
+      six and one in three, and be correct each time. Three UK surveys, fielded across roughly the
+      same period, put adoption at <span class="num">16%</span>, <span class="num">25%</span> and
+      <span class="num">35%</span>. None of them are wrong. They are not measuring the same
+      population, and they are not asking the same question.
+    </p>
+    <p>
+      Start with the lowest number, because it explains the method problem most clearly. DSIT's
+      figure, <span class="num">16%</span> of UK businesses using at least one AI technology, comes
+      from a telephone survey of <span class="num">3,500</span> businesses with five or more
+      employees. That sampling frame excludes businesses under five employees, which is most UK
+      businesses by count. DSIT's own breakdown shows why the exclusion matters: micro businesses sit
+      at <span class="num">14%</span>, large businesses at <span class="num">36%</span>. A survey that
+      starts by cutting out the smallest, least-adopting firms should, if anything, read higher than
+      one that does not. It still comes out lowest of the three, which tells you something about how
+      much weight the other two surveys are putting on breadth of sample rather than size of business.
+    </p>
+  </div>
+  <CitationChip source="dsit-uk" />
+
+  <div class="rail-body">
+    <h2 id="uk-three-numbers">The UK's three numbers</h2>
+    <p>
+      Line the three up and the disagreement stops looking like noise and starts looking like three
+      different instruments pointed at three different things.
+    </p>
+  </div>
+
+  <div class="rail-body my-6">
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption>UK business AI adoption, three surveys of roughly the same period</caption>
+        <thead>
+          <tr>
+            <th scope="col">Survey</th>
+            <th scope="col">Figure</th>
+            <th scope="col">Sample</th>
+            <th scope="col">Who was asked</th>
+            <th scope="col">Fieldwork</th>
+            <th scope="col">Why it differs</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            ukRows.map((r) => {
+              const s = getSource(r.id);
+              return (
+                <tr>
+                  <td class="figure">
+                    <a href={s.url} rel="noopener nofollow" target="_blank">{s.org}</a> {s.year}
+                  </td>
+                  <td>{s.metric}</td>
+                  <td class="figure">{s.sample ?? 'not stated in accessible sources'}</td>
+                  <td>{r.who}</td>
+                  <td class="figure">{r.fieldwork}</td>
+                  <td>{r.whyDiffers}</td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-3 text-xs" style="color: var(--color-muted)">
+      Compiled by implementai.today from the sources named. We ran no survey. Machine-readable version:
+      <a href="/data/ai-failure-rates.json">/data/ai-failure-rates.json</a>.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <p>
+      The pattern holds even inside the two national statistics surveys that are supposedly measuring
+      the same thing. ONS's <span class="num">25%</span> is not simply more than DSIT's
+      <span class="num">16%</span>: it comes from a wider panel, fielded seven months later, over a
+      period ONS's own trend line shows climbing. And the British Chambers of Commerce's
+      <span class="num">35%</span>, the largest figure of the three, comes from the least
+      representative sample of the three: its own members, whom the release itself describes as more
+      AI forward than UK businesses generally.
+    </p>
+  </div>
+  <CitationChip source="ons-bics" />
+  <CitationChip source="bcc-intuit" />
+
+  <div class="rail-body">
+    <h2 id="size-gradient">The size gradient, which is the finding everyone skips</h2>
+    <p>
+      Every one of these surveys, when it breaks the figure out by firm size, finds the same shape:
+      large firms adopt at roughly double the rate of small ones. That is a more useful number than any
+      headline above, because it is the one figure that survives translation between surveys.
+    </p>
+  </div>
+
+  <div class="rail-body my-6">
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption>Adoption by firm size, three surveys</caption>
+        <thead>
+          <tr>
+            <th scope="col">Survey</th>
+            <th scope="col">Smallest firms measured</th>
+            <th scope="col">Largest firms measured</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            sizeRows.map((r) => {
+              const s = getSource(r.id);
+              return (
+                <tr>
+                  <td class="figure">
+                    <a href={s.url} rel="noopener nofollow" target="_blank">{s.org}</a> {s.year}
+                  </td>
+                  <td class="figure">{r.smallest}</td>
+                  <td class="figure">{r.largest}</td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="rail-body">
+    <p>
+      Read across the DSIT and Census rows and the doubling is close enough to trust: this is not a
+      quirk of one survey design, it turns up on both sides of the Atlantic, using three different
+      methods and two different currencies of business size. If you only remember one number from this
+      page, it should not be <span class="num">16%</span>, <span class="num">25%</span> or
+      <span class="num">35%</span>. It should be that whichever survey you pick, the largest firms in
+      it are adopting AI at roughly double the rate of the smallest.
+    </p>
+  </div>
+  <CitationChip source="census-btos" />
+
+  <div class="rail-body">
+    <h2 id="adoption-is-not-value">Adoption is not value</h2>
+    <p>
+      Using AI and getting anything from it are different questions, and most headlines only answer
+      the first one. McKinsey's 2025 global survey found <span class="num">88%</span> of organisations
+      report regular AI use in at least one business function, and <span class="num">72%</span> use
+      generative AI specifically. Read past the headline and the same survey finds only
+      <span class="num">7%</span> have fully scaled AI, and just <span class="num">39%</span> report
+      any enterprise-level EBIT impact.
+    </p>
+    <p>
+      BCG's 2025 executive survey draws the same gap from the other direction:
+      <span class="num">5%</span> of companies are achieving AI value at scale, its top maturity band,
+      while <span class="num">60%</span> are achieving no material value at all. And
+      <a href={getSource('ibm-ceo').url} rel="noopener nofollow" target="_blank">IBM's CEO study</a>
+      found that CEOs themselves rate only <span class="num">25%</span> of AI initiatives as having
+      delivered the ROI they expected, with just <span class="num">16%</span> scaled enterprise wide.
+      Adoption is the easy number to report. This is the one that actually matters, and it is not the
+      one that gets quoted.
+    </p>
+  </div>
+  <CitationChip source="mckinsey-state-of-ai" />
+  <CitationChip source="bcg-value-gap" />
+
+  <div class="rail-body">
+    <h2 id="how-they-get-misquoted">How these numbers get misquoted</h2>
+    <p>Three specific errors recur often enough to be worth naming, each checked against the primary text.</p>
+  </div>
+
+  <div class="rail-body my-6">
+    <div class="table-wrap">
+      <table class="data-table">
+        <caption>Adoption figures, as they circulate against what the source actually says</caption>
+        <thead>
+          <tr>
+            <th scope="col">What circulates</th>
+            <th scope="col">What the source actually says</th>
+            <th scope="col">Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            driftIds.map((id) => {
+              const s = getSource(id);
+              return (
+                <tr>
+                  <td style="color: var(--color-danger)">{s.drift!.circulates}</td>
+                  <td>{s.drift!.actually}</td>
+                  <td class="figure">
+                    <a href={s.url} rel="noopener nofollow" target="_blank">{s.org} {s.year}</a>
+                  </td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="rail-body">
+    <p>
+      The pattern is the same in all three: a hedge, a hard-won maturity band or a low-bar usage
+      question gets flattened into a plain measurement, and the flattened version is the one that keeps
+      circulating. ONS's baseline drops a percentage point in the retelling. BCG's 2025 report gets
+      credited with a 2024 number and a category it never used. McKinsey's low bar for "use" gets read
+      as evidence the whole subject is solved, in the same document that says two thirds of companies
+      have not begun scaling.
+    </p>
+
+    <h2 id="how-to-quote-honestly">How to quote an adoption figure honestly</h2>
+    <p>
+      A bare percentage is not a citation. Before repeating any adoption figure, and before
+      implementai.today does, name four things.
+    </p>
+    <ol>
+      <li>The survey and the year it was fielded, not just the organisation that publicised it.</li>
+      <li>The sample: who was asked, and how many.</li>
+      <li>The fieldwork window, since a survey run in December 2025 and one run in May 2025 are not describing the same market.</li>
+      <li>
+        The literal question asked. "Uses at least one AI technology" (DSIT), "currently using some
+        form of AI" (ONS) and "actively using AI" (BCC) are three different questions wearing the same
+        word.
+      </li>
+    </ol>
+    <p>
+      None of this tells you whether the AI in question does anything useful, which is a separate and
+      much less quotable question, covered in <a href="/why-ai-projects-fail">why AI projects fail</a>
+      and reconciled the same way, source by source, in
+      <a href="/ai-project-failure-rate">the AI project failure rate</a>.
+    </p>
+
+    <h2 id="faq">Questions, answered from the sources</h2>
+    {
+      qa.map(({ q, a }) => (
+        <div class="mt-8">
+          <h3>{q}</h3>
+          <p class="mt-2">{a}</p>
+        </div>
+      ))
+    }
+
+    <hr class="my-10" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+    <p class="text-sm">
+      Related: <a href="/why-ai-projects-fail">why AI projects fail</a>, the causes behind the numbers.
+      And <a href="/ai-project-failure-rate">the AI project failure rate</a>, reconciled the same way:
+      RAND's more than 80% next to MIT's 95% and BCG's 5% at scale.
+    </p>
+  </div>
+</ArticleLayout>

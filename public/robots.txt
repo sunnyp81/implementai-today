@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://implementai.today/sitemap-index.xml

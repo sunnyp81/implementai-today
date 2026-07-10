@@ -1,0 +1,297 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import CitationChip from '../components/CitationChip.astro';
+import { SITE, breadcrumb, faqPage, orgId, personId } from '../lib/site';
+import { getSource } from '../lib/sources';
+
+const path = '/why-ai-projects-fail';
+const title = 'Why AI projects fail: what the research actually found | implementai.today';
+const description =
+  "RAND studied 65 AI practitioners and found five organisational root causes of project failure, not a technology problem. What the causes actually are, what the 84% leadership figure really measures, and what RAND recommends instead.";
+
+const h1 = 'Why AI projects fail';
+
+const lead =
+  "RAND's 2024 study of 65 AI practitioners names five recurring root causes of project failure: misunderstanding the problem, missing data, chasing the wrong technology, underinvesting in infrastructure, and picking a task AI cannot yet do. All five are organisational decisions, not model failures. RAND also found that 84% of its interviewees named a leadership-driven cause as the primary reason projects fail, which is a finding about what 65 people believe, not a measurement of what happens across the industry.";
+
+const published = '2026-07-10';
+
+const citedIds = ['rand-failure', 'rand-leadership', 'mit-nanda', 'gartner-poc'];
+const cited = citedIds.map((id) => getSource(id));
+
+const qa = [
+  {
+    q: 'What are the five root causes of AI project failure, according to RAND?',
+    a: "RAND names misunderstanding or miscommunicating the business problem, lacking the data an effective model needs, chasing new technology instead of a real user problem, underinvesting in infrastructure to manage data and deploy models, and applying AI to a task that is currently too difficult for it. RAND's own labels for these, from its Table 3, are leadership-driven, data-driven, bottom-up-driven, underinvestment in infrastructure, and immature technology.",
+  },
+  {
+    q: 'Does 84% of AI project failure come from leadership decisions?',
+    a: "No. RAND's 84% is the share of its 65 interviewees who named a leadership-driven cause as the primary reason AI projects fail. That is expert opinion from a fixed, small sample, not a measurement of how often leadership actually causes failure across the industry.",
+  },
+  {
+    q: 'What does RAND recommend organisations do differently?',
+    a: "Five things: make sure technical staff understand the project's purpose and domain context, choose problems worth solving for years rather than months, focus on the problem before the technology, invest in infrastructure for deployment and monitoring, and be honest about what AI cannot yet do.",
+  },
+  {
+    q: 'Is AI project failure mostly a technology problem?',
+    a: "RAND's interviews say no: the recurring causes are organisational, about problem selection, data readiness, infrastructure and leadership expectations. MIT's 2025 research on generative AI specifically points at a related but different issue, a learning gap in how deployed systems retain feedback.",
+  },
+  {
+    q: "Is Gartner's 30% abandonment figure a measured result?",
+    a: 'No. It is a forecast Gartner published in July 2024 about what it expected to be true of generative AI proof-of-concept projects by the end of 2025. Treat it as a prediction, not an autopsy of projects that have already failed.',
+  },
+];
+
+const schema = [
+  breadcrumb([
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path },
+  ]),
+  faqPage(qa),
+  {
+    '@type': 'Article',
+    '@id': `${SITE.url}${path}#article`,
+    headline: h1,
+    description,
+    author: { '@id': personId },
+    publisher: { '@id': orgId },
+    datePublished: published,
+    dateModified: published,
+    mainEntityOfPage: `${SITE.url}${path}`,
+    citation: cited.map((s) => s.url),
+    isBasedOn: cited.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      datePublished: String(s.year),
+      url: s.url,
+    })),
+  },
+];
+---
+
+<ArticleLayout
+  title={title}
+  description={description}
+  path={path}
+  h1={h1}
+  lead={lead}
+  datePublished={published}
+  dateModified={published}
+  schema={schema}
+  trail={[
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path },
+  ]}
+>
+  <div class="rail-body">
+    <h2 id="five-causes">The five root causes, as RAND names them</h2>
+    <p>
+      RAND's interviewers did not set out to count anything. <span class="num">65</span> people,
+      <span class="num">50</span> from industry and <span class="num">15</span> from academia, talked
+      through what actually went wrong on AI projects between August and December
+      <span class="num">2023</span>. Five causes kept recurring, and RAND gave each one a label in
+      its Table 3.
+    </p>
+    <p>
+      In RAND's words:
+      <em>
+        "Our interviews highlighted five leading root causes of the failure of AI projects. First,
+        industry stakeholders often misunderstand, or miscommunicate, what problem needs to be
+        solved using AI. Too often, trained AI models are deployed that have been optimized for the
+        wrong metrics or do not fit into the overall business workflow and context. Second, many AI
+        projects fail because the organization lacks the necessary data to adequately train an
+        effective AI model. Third, in some cases, AI projects fail because the organization focuses
+        more on using the latest and greatest technology than on solving real problems for its
+        intended users. Fourth, organizations might not have adequate infrastructure to manage their
+        data and deploy completed AI models, which increases the likelihood of project failure.
+        Finally, in some cases, AI projects fail because the technology is applied to problems that
+        are too difficult for AI to solve."
+      </em>
+    </p>
+    <p class="text-xs" style="color: var(--color-muted)">
+      RAND, 2024. Punctuation normalised, wording unchanged: the original sets off "or
+      miscommunicate" with dashes rather than commas.
+    </p>
+  </div>
+
+  <div class="rail-body my-6">
+    <ul>
+      <li>
+        <strong>Leadership-driven failures.</strong> Misunderstanding or miscommunicating the
+        problem. In practice: a model gets built and shipped that optimises for a metric nobody
+        downstream actually cares about, because the business problem was never pinned down before
+        the build started.
+      </li>
+      <li>
+        <strong>Data-driven failures.</strong> The organisation does not have the data an effective
+        model needs. In practice: the training set is whatever happened to get logged, not what the
+        task requires, and nobody notices until the model is already in front of users.
+      </li>
+      <li>
+        <strong>Bottom-up-driven failures.</strong> Chasing the newest technology instead of a real
+        user problem. In practice: the team picks the model architecture first and goes looking for
+        a problem to attach it to.
+      </li>
+      <li>
+        <strong>Underinvestment in infrastructure.</strong> No adequate way to manage data or deploy
+        a finished model. In practice: the model works in a notebook and has no route to production,
+        no monitoring, and no owner once the person who built it moves on.
+      </li>
+      <li>
+        <strong>Immature technology.</strong> The task is too hard for AI to do, full stop. In
+        practice: no amount of extra engineering fixes a problem that is genuinely beyond what the
+        technology can currently do.
+      </li>
+    </ul>
+  </div>
+  <CitationChip source="rand-failure" />
+
+  <div class="rail-body">
+    <h2 id="the-84-percent">What the 84% figure actually means</h2>
+    <p>
+      RAND writes:
+      <em>
+        "More than any other type of issue, our interviewees noted that failures driven by the
+        decisions and expectations of the organization's business leadership were far and away the
+        most frequent causes of project failure. Eighty-four percent of our interviewees cited one
+        or more of these root causes as the primary reason that AI projects would fail."
+      </em>
+    </p>
+    <p>
+      Read that for what it says, not what it has become. It is <span class="num">84%</span> of
+      <span class="num">65</span> interviewed experts naming a leadership-driven cause as the one
+      they saw most often. That is expert opinion from a fixed set of people, not an audit of the
+      industry's actual failure rate. Somewhere between RAND's report and the version you have
+      probably seen, "84% of interviewees said" turned into "84% of AI projects fail because of
+      leadership," which RAND never claims.
+    </p>
+    <p>
+      RAND breaks leadership-driven failure into four narrower sub-causes: optimising for the wrong
+      business problem, using AI to solve problems that did not need it, overconfidence in what AI
+      can do, and underestimating the time a project actually takes. All four are decisions made
+      before a model is ever trained.
+    </p>
+    <p>
+      There is also a second, unrelated 84% in the same report, drawn from Cisco's AI Readiness
+      Index:
+      <em>
+        "According to one survey, 84 percent of business leaders responded that they believe that AI
+        will have a significant impact on their business, and 97 percent of business leaders
+        reported that the urgency to deploy AI-powered technologies has increased."
+      </em>
+      Two different 84% figures, one document. It is not hard to see how they get merged into one,
+      larger-sounding claim. We cover the full provenance of both on
+      <a href="/why-ai-projects-fail/rand">the RAND deep dive</a>.
+    </p>
+  </div>
+  <CitationChip source="rand-leadership" />
+
+  <div class="rail-body">
+    <h2 id="what-to-do">What RAND says to do instead</h2>
+    <p>RAND's recommendations track the causes directly. Five principles, in its own words:</p>
+    <ul>
+      <li>
+        <strong>Ensure that technical staff understand the project purpose and domain context.</strong>
+        The team building the model needs to know what the business problem actually is, not just
+        the metric it has been handed.
+      </li>
+      <li>
+        <strong>Choose enduring problems.</strong> Pick something worth solving for years, not a
+        problem that will look different in six months.
+      </li>
+      <li>
+        <strong>Focus on the problem, not the technology.</strong> Decide what needs solving before
+        deciding which model solves it.
+      </li>
+      <li>
+        <strong>Invest in infrastructure.</strong> A model with no deployment path and no monitoring
+        is a demo, not a project.
+      </li>
+      <li>
+        <strong>Understand AI's limitations.</strong> Some problems are still too hard. Knowing
+        which ones saves the budget for the ones that are not.
+      </li>
+    </ul>
+    <p>
+      For academic teams, RAND adds two more: overcome data-collection barriers through partnerships
+      with government, and expand doctoral programs in data science for practitioners. Its own
+      framing of the difference between the two populations is worth keeping. On academia:
+      <em>
+        "when AI projects fail, they do so because of a misalignment in incentives rather than an
+        overall technical barrier to product delivery. In short, overcoming an AI failure is more
+        about humans than the machines."
+      </em>
+      On industry, the closest equivalent is narrower:
+      <em>
+        "the most common root cause of failure was the business leadership of the organization
+        misunderstanding how to set the project on a pathway to success."
+      </em>
+      Both point at people rather than models, but they are not the same finding, and RAND does not
+      treat them as interchangeable.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="learning-gap">The generative AI wrinkle: MIT's learning gap</h2>
+    <p>
+      RAND's interviews predate the current wave of generative AI deployment. MIT Project NANDA's
+      <span class="num">2025</span> report on enterprise generative AI use found a related but
+      distinct problem, which it calls the learning gap:
+      <em>
+        "The core barrier to scaling is not infrastructure, regulation, or talent. It is learning.
+        Most GenAI systems do not retain feedback, adapt to context, or improve over time."
+      </em>
+      That is a narrower, more technical claim than RAND's leadership finding, and it is specific to
+      generative AI tools rather than AI projects generally. We go through MIT's report in full on
+      <a href="/why-ai-projects-fail/mit-nanda">a separate page</a>, because its own sourcing and
+      sample need the same scrutiny RAND's does.
+    </p>
+  </div>
+  <CitationChip source="mit-nanda" />
+
+  <div class="rail-body">
+    <h2 id="gartner-forecast">Why Gartner's reasons are a forecast, not an autopsy</h2>
+    <p>
+      Gartner's most quoted line reads like a finding:
+      <em>
+        "At least 30% of generative AI (GenAI) projects will be abandoned after proof of concept by
+        the end of 2025, due to poor data quality, inadequate risk controls, escalating costs or
+        unclear business value."
+      </em>
+      Notice the tense. This was published in July <span class="num">2024</span>, describing what
+      Gartner expected to be true by the end of <span class="num">2025</span>. It is a prediction,
+      not a count of abandoned projects.
+    </p>
+    <p>
+      The reasons Gartner names, poor data, inadequate risk controls, escalating cost, and unclear
+      business value, overlap with RAND's data-driven and leadership-driven causes almost exactly.
+      That overlap is worth noticing. It is not evidence that either organisation measured the same
+      thing: one interviewed <span class="num">65</span> people about projects that had already
+      happened, the other forecast an industry-wide abandonment rate for a year that had not
+      happened yet. For the full picture of which AI failure figures are measurements and which are
+      forecasts, see <a href="/ai-project-failure-rate">the reconciled failure rate page</a>.
+    </p>
+  </div>
+  <CitationChip source="gartner-poc" />
+
+  <div class="rail-body">
+    <h2 id="faq">Questions, answered from the research</h2>
+    {
+      qa.map(({ q, a }) => (
+        <div class="mt-8">
+          <h3>{q}</h3>
+          <p class="mt-2">{a}</p>
+        </div>
+      ))
+    }
+
+    <hr class="my-10" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+    <p class="text-sm">
+      Related: the <a href="/ai-project-failure-rate">AI project failure rate</a>, reconciled
+      across every study that quotes a number, not just RAND. Check your own project against these
+      causes with the <a href="/ai-implementation-checklist">implementation checklist</a>, or see
+      how they line up against <a href="/ai-adoption-statistics">UK AI adoption statistics</a>.
+    </p>
+  </div>
+</ArticleLayout>

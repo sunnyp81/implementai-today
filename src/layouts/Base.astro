@@ -1,0 +1,116 @@
+---
+import '../styles/global.css';
+import { SITE, NAV } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Path only, e.g. "/ai-implementation-cost". */
+  path: string;
+  /** JSON-LD nodes to place in @graph. */
+  schema?: unknown[];
+  noindex?: boolean;
+}
+
+const { title, description, path, schema = [], noindex = false } = Astro.props;
+const canonical = `${SITE.url}${path}`;
+const graph = schema.length ? { '@context': 'https://schema.org', '@graph': schema } : null;
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.brand} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#f3f0e9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#14130f" media="(prefers-color-scheme: dark)" />
+
+    {graph && <script type="application/ld+json" set:html={JSON.stringify(graph)} />}
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="border-b" style="border-color: var(--color-hairline)">
+      <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3.5">
+        <a
+          href="/"
+          class="no-underline"
+          style="font-family: var(--font-mono); color: var(--color-ink); font-weight: 600; letter-spacing: -0.02em;"
+        >
+          implementai<span style="color: var(--color-accent)">.today</span>
+        </a>
+
+        <nav aria-label="Primary" class="order-3 w-full overflow-x-auto md:order-none md:w-auto">
+          <ul class="flex items-center gap-5 whitespace-nowrap text-sm">
+            {
+              NAV.map((item) => (
+                <li>
+                  <a
+                    href={item.href}
+                    class="no-underline hover:underline"
+                    style="color: var(--color-muted)"
+                    aria-current={path === item.href ? 'page' : undefined}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <a href="/ai-project-risk-diagnostic" class="btn btn-primary ml-auto text-sm">
+          Free risk diagnostic
+        </a>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="mt-24 border-t" style="border-color: var(--color-hairline)">
+      <div class="mx-auto max-w-6xl px-4 py-10">
+        <p class="overline">Standing disclosure</p>
+        <p class="mt-2 max-w-2xl text-sm" style="color: var(--color-muted)">
+          {SITE.disclosure}
+        </p>
+
+        <nav aria-label="Footer" class="mt-8">
+          <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            {
+              NAV.map((item) => (
+                <li>
+                  <a href={item.href} style="color: var(--color-muted)">
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+            <li><a href="/about" style="color: var(--color-muted)">About and method</a></li>
+          </ul>
+        </nav>
+
+        <p class="mt-8 text-xs" style="color: var(--color-muted)">
+          <span class="num">&copy; {year}</span> {SITE.brand}. Written by
+          <a href="/about">{SITE.author.name}</a>. Figures belong to the organisations that published them.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, identityGraph, breadcrumb, orgId, personId } from '../lib/site';
+import { SOURCES } from '../lib/sources';
+
+const path = '/about';
+const title = 'About and method | implementai.today';
+const description =
+  'Who writes this site, what it may and may not claim, and exactly how every statistic on it is checked against its primary source.';
+
+const schema = [
+  ...identityGraph(),
+  breadcrumb([
+    { name: 'Home', path: '/' },
+    { name: 'About and method', path },
+  ]),
+  {
+    '@type': 'AboutPage',
+    '@id': `${SITE.url}${path}#page`,
+    url: `${SITE.url}${path}`,
+    name: title,
+    description,
+    publisher: { '@id': orgId },
+    about: { '@id': personId },
+  },
+];
+
+const counts = {
+  total: SOURCES.length,
+  verified: SOURCES.filter((s) => s.status === 'verified').length,
+  contested: SOURCES.filter((s) => s.status === 'contested').length,
+  blocked: SOURCES.filter((s) => s.status === 'blocked').length,
+  noSample: SOURCES.filter((s) => s.sample === null).length,
+};
+---
+
+<Base title={title} description={description} path={path} schema={schema}>
+  <div class="mx-auto max-w-3xl px-4 py-14 prose">
+    <p class="overline">About and method</p>
+    <h1 class="mt-2">What this site is, and what it is not</h1>
+
+    <p class="lead mt-6">
+      Most writing about AI implementation quotes one alarming statistic and then sells you
+      something. This site does the opposite. It quotes the research, shows you the sample size and
+      the method, links the original, and sells you nothing.
+    </p>
+
+    <div
+      class="my-8 border-l-2 p-4"
+      style="border-color: var(--color-accent); background: var(--color-surface-2)"
+    >
+      <p class="text-sm" style="margin: 0"><strong>Standing disclosure.</strong> {SITE.disclosure}</p>
+    </div>
+
+    <h2>Who writes this</h2>
+    <p>
+      <strong>{SITE.author.name}</strong> is a UK SEO consultant and independent developer who builds
+      and ships AI-assisted software. He does not sell AI transformation projects and has never run
+      one. That is deliberate, and it is the point: this site has no consultancy to steer you toward
+      and no tool it needs you to buy, so the evidence can point wherever it points.
+    </p>
+    <p>His role here is narrow and checkable. He reads the primary research behind the headline
+      failure statistics, quotes it with its methodology and sample size, and builds the free
+      diagnostics on this site. Where a figure is contested, he shows the range and names each survey.
+    </p>
+
+    <h2>What this site may never claim</h2>
+    <p>These are hard rules, not aspirations. If you find the site breaking one, it is a bug.</p>
+    <ul>
+      <li>It has run <strong>no surveys</strong> and owns <strong>no proprietary dataset</strong>.</li>
+      <li>It has <strong>tested no tools</strong> and <strong>delivered no client AI projects</strong>.</li>
+      <li>It never invents a sample size. When a study does not publish one, the citation says
+        <em>not stated in accessible sources</em>, which is the honest answer.</li>
+      <li>It never repeats a vendor's cost estimate as though it were research. Agency blog figures
+        such as the widely quoted ten-to-fifty-thousand ranges are marketing, and are labelled as such.</li>
+      <li>The risk diagnostic is <strong>not a validated statistical model</strong> and cannot predict
+        whether a project will fail.</li>
+    </ul>
+
+    <h2>How a statistic gets onto this site</h2>
+    <ol>
+      <li><strong>Find the primary.</strong> Not a blog quoting a blog. The report, the press release,
+        the national statistics bulletin.</li>
+      <li><strong>Read what it actually says.</strong> Numbers get more precise and more dramatic as
+        they travel. A source saying "over 80%" becomes "80.3%" three articles later. We quote the
+        source's own wording.</li>
+      <li><strong>Record the scaffolding.</strong> Sample size, method, fieldwork window, publication
+        date. A figure without these is an anecdote wearing a suit.</li>
+      <li><strong>Note whether it is a measurement or a prediction.</strong> Several of the most-quoted
+        AI failure figures are analyst forecasts about the future, not observations of the past. We
+        mark those.</li>
+      <li><strong>Record whether you can actually read it.</strong> Several primary sources return an
+        error to ordinary readers. Where that happens we say so and name the credible secondary we
+        read instead.</li>
+    </ol>
+
+    <h2>The citation chip</h2>
+    <p>
+      Every statistic on this site carries a chip in the margin. Its dot tells you how much to trust
+      the chain of custody:
+    </p>
+    <ul>
+      <li><span class="chip-dot chip-dot--verified" style="display:inline-block"></span>
+        <strong>Green.</strong> We fetched and read the primary source.</li>
+      <li><span class="chip-dot chip-dot--contested" style="display:inline-block"></span>
+        <strong>Amber.</strong> The figure is contested, ranged, or a prediction rather than a
+        measurement. Read the range, not the headline.</li>
+      <li><span class="chip-dot chip-dot--blocked" style="display:inline-block"></span>
+        <strong>Oxblood.</strong> The primary source blocks ordinary readers. The figure comes from a
+        named credible secondary, and we link both.</li>
+    </ul>
+
+    <h2>The current corpus</h2>
+    <p>
+      This site cites <span class="num">{counts.total}</span> sources and no others. Of those,
+      <span class="num num-success">{counts.verified}</span> were read directly,
+      <span class="num num-warn">{counts.contested}</span> are contested or predicted, and
+      <span class="num num-danger">{counts.blocked}</span> block ordinary readers and are quoted via a
+      named secondary. <span class="num">{counts.noSample}</span> do not publish a sample size we can
+      obtain, and we say so rather than guess.
+    </p>
+    <p>
+      Adding a source means verifying it first. If a page you want does not exist, that is usually
+      because the research to write it honestly does not exist either.
+    </p>
+
+    <h2>How this site pays for itself</h2>
+    <p>
+      Some links to software go to affiliate programmes, which means this site may earn a commission
+      if you subscribe. Those links appear only inside advice we would give anyway, never as a list of
+      tools to browse. Nothing on this site is gated behind an email address, there is no sales call,
+      and no vendor has paid for a mention or seen a page before it went live.
+    </p>
+
+    <h2>Corrections</h2>
+    <p>
+      If a figure here misrepresents its source, that is the most serious error this site can make.
+      Say so and it gets fixed, with the change noted. Every page shows the date its figures were
+      last checked.
+    </p>
+  </div>
+</Base>

@@ -1,0 +1,245 @@
+---
+import { QUESTIONS, FAILURE_MODES, BANDS } from '../lib/diagnostic';
+import { getSource } from '../lib/sources';
+
+const maxScore = QUESTIONS.reduce(
+  (sum, q) => sum + Math.max(...q.options.map((o) => o.weight)),
+  0
+);
+
+// The scoring engine is handed to the client as data, not duplicated in script.
+const payload = {
+  maxScore,
+  questions: QUESTIONS.map((q) => ({
+    id: q.id,
+    options: Object.fromEntries(q.options.map((o) => [o.value, o.weight])),
+  })),
+  modes: FAILURE_MODES.map((m) => ({
+    id: m.id,
+    name: m.name,
+    symptom: m.symptom,
+    remedy: m.remedy,
+    triggeredBy: m.triggeredBy,
+    source: (() => {
+      const s = getSource(m.sourceId);
+      return { org: s.org, year: s.year, metric: s.metric, url: s.url };
+    })(),
+  })),
+  bands: BANDS,
+};
+---
+
+<section aria-labelledby="dx-heading">
+  <h2 id="dx-heading" class="sr-only">AI project risk diagnostic</h2>
+
+  <div
+    class="mb-8 border-l-2 p-4"
+    style="border-color: var(--color-warn); background: var(--color-surface-2)"
+  >
+    <p class="overline" style="color: var(--color-warn)">Read this first</p>
+    <p class="mt-1.5 text-sm">
+      This is <strong>not a validated statistical model</strong> and it cannot predict whether your
+      project will fail. It is a structured way to check your project against the factors that
+      published studies actually measured. Every question below exists because a named study
+      measured that factor, and each one shows you which. Nothing is stored, nothing is sent
+      anywhere, and there is no sign-up.
+    </p>
+  </div>
+
+  <form id="dx-form" novalidate>
+    <ol class="space-y-10" style="list-style: none; padding: 0">
+      {
+        QUESTIONS.map((q, i) => {
+          const s = getSource(q.sourceId);
+          return (
+            <li>
+              <fieldset style="border: 0; padding: 0; margin: 0">
+                <legend class="mb-1 block">
+                  <span class="overline">Question {String(i + 1).padStart(2, '0')}</span>
+                  <span class="mt-1 block text-lg" style="font-family: var(--font-serif); font-weight: 600">
+                    {q.label}
+                  </span>
+                </legend>
+
+                <p class="mb-3 text-sm" style="color: var(--color-muted)">
+                  <strong style="color: var(--color-ink)">Why this is asked:</strong> {q.because}{' '}
+                  <a href={s.status === 'blocked' && s.secondaryUrl ? s.secondaryUrl : s.url} rel="noopener nofollow" target="_blank">
+                    {s.org} {s.year} <span aria-hidden="true">&#8599;</span>
+                  </a>
+                </p>
+
+                <div class="space-y-1.5">
+                  {q.options.map((o) => (
+                    <label class="dx-opt">
+                      <input type="radio" name={q.id} value={o.value} required />
+                      <span>{o.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            </li>
+          );
+        })
+      }
+    </ol>
+
+    <div class="mt-10 flex flex-wrap items-center gap-4">
+      <button type="submit" class="btn btn-primary">Score this project</button>
+      <button type="reset" class="btn btn-secondary">Clear</button>
+      <p id="dx-error" class="text-sm" role="alert" style="color: var(--color-danger)" hidden>
+        Answer every question to see a score.
+      </p>
+    </div>
+  </form>
+
+  <div id="dx-result" hidden tabindex="-1" aria-live="polite" class="mt-12 scroll-mt-24"></div>
+
+  <noscript>
+    <p class="mt-8 text-sm" style="color: var(--color-muted)">
+      Scoring needs JavaScript. The questions above, and the study behind each one, are the useful
+      part and they are all on this page without it.
+    </p>
+  </noscript>
+</section>
+
+<script type="application/json" id="dx-data" set:html={JSON.stringify(payload)} />
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .dx-opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.5625rem 0.75rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: 2px;
+    background: var(--color-surface);
+    cursor: pointer;
+    font-size: 0.9375rem;
+  }
+  .dx-opt:hover { border-color: var(--color-accent); }
+  .dx-opt:has(input:checked) {
+    border-color: var(--color-accent);
+    box-shadow: inset 2px 0 0 var(--color-accent);
+  }
+  .dx-opt input { margin-top: 0.3rem; accent-color: var(--color-accent); flex: none; }
+</style>
+
+<script>
+  interface Mode {
+    id: string;
+    name: string;
+    symptom: string;
+    remedy: string;
+    triggeredBy: string[];
+    source: { org: string; year: number; metric: string; url: string };
+  }
+  interface Band {
+    id: string;
+    label: string;
+    min: number;
+    tone: 'success' | 'warn' | 'danger';
+    verdict: string;
+  }
+  interface Payload {
+    maxScore: number;
+    questions: { id: string; options: Record<string, number> }[];
+    modes: Mode[];
+    bands: Band[];
+  }
+
+  const el = document.getElementById('dx-data');
+  const form = document.getElementById('dx-form') as HTMLFormElement | null;
+  const out = document.getElementById('dx-result');
+  const err = document.getElementById('dx-error');
+  if (!el || !form || !out || !err) throw new Error('diagnostic: missing nodes');
+
+  const data: Payload = JSON.parse(el.textContent || '{}');
+  const esc = (s: string) =>
+    s.replace(/[&<>"']/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string
+    );
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+
+    const answers: Record<string, number> = {};
+    for (const q of data.questions) {
+      const v = fd.get(q.id);
+      if (typeof v !== 'string') {
+        err.hidden = false;
+        return;
+      }
+      answers[q.id] = q.options[v] ?? 0;
+    }
+    err.hidden = true;
+
+    const score = Object.values(answers).reduce((a, b) => a + b, 0);
+    const pct = Math.round((score / data.maxScore) * 100);
+
+    const band =
+      [...data.bands].sort((a, b) => b.min - a.min).find((b) => pct >= b.min) ?? data.bands[0];
+
+    // A mode fires when any of its trigger questions was answered at weight >= 2.
+    const fired = data.modes
+      .map((m) => ({ m, hits: m.triggeredBy.filter((qid) => (answers[qid] ?? 0) >= 2).length }))
+      .filter((x) => x.hits > 0)
+      .sort((a, b) => b.hits - a.hits)
+      .slice(0, 3);
+
+    const modesHtml = fired.length
+      ? fired
+          .map(
+            ({ m }) => `
+        <li class="border-l-2 pl-4" style="border-color: var(--color-hairline)">
+          <h4 style="font-family: var(--font-serif); font-weight:600; font-size:1.0625rem">${esc(m.name)}</h4>
+          <p class="mt-1 text-sm">${esc(m.symptom)}</p>
+          <p class="mt-2 text-sm"><strong>Do this next:</strong> ${esc(m.remedy)}</p>
+          <p class="mt-2 text-xs" style="color: var(--color-muted); font-family: var(--font-mono)">
+            <a href="${esc(m.source.url)}" rel="noopener nofollow" target="_blank">${esc(m.source.org)} ${m.source.year}</a>
+            &middot; ${esc(m.source.metric)}
+          </p>
+        </li>`
+          )
+          .join('')
+      : `<li><p class="text-sm">No individual failure mode fired at high weight. That is a good sign, and it is not a prediction of success.</p></li>`;
+
+    out.innerHTML = `
+      <div class="border p-6" style="border-color: var(--color-hairline); background: var(--color-surface); border-radius:2px">
+        <p class="overline">Result</p>
+        <p class="mt-2" style="font-size:2.25rem; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight:600; color: var(--color-${band.tone})">
+          ${pct}<span style="font-size:1.25rem">%</span>
+          <span style="font-size:1.25rem; font-family: var(--font-serif); color: var(--color-ink)">&nbsp;risk-factor load</span>
+        </p>
+        <p class="mt-1 text-lg" style="font-family: var(--font-serif); font-weight:600">${esc(band.label)}</p>
+        <p class="mt-2 max-w-2xl text-sm">${esc(band.verdict)}</p>
+        <p class="mt-4 text-xs" style="color: var(--color-muted)">
+          This score is the proportion of risk weight your answers carry across
+          <span class="num">${data.questions.length}</span> factors drawn from published studies. It is not a probability
+          of failure, and no study has validated this scoring. Treat it as a checklist that added itself up.
+        </p>
+      </div>
+
+      <h3 class="mt-10">What is most likely to go wrong, given those answers</h3>
+      <ul class="mt-4 space-y-6" style="list-style:none; padding:0">${modesHtml}</ul>
+    `;
+    out.hidden = false;
+    out.focus();
+    out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  form.addEventListener('reset', () => {
+    out.hidden = true;
+    out.innerHTML = '';
+    err.hidden = true;
+  });
+</script>

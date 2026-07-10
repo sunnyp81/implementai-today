@@ -1,0 +1,209 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import CitationChip from '../components/CitationChip.astro';
+import { SITE, breadcrumb, faqPage, orgId, personId } from '../lib/site';
+import { getSource } from '../lib/sources';
+
+const path = '/ai-implementation-cost';
+const title = 'AI implementation cost: why nobody credible publishes a figure | implementai.today';
+const description =
+  'There is no reliable public figure for AI implementation cost. Every page ranking for this question is a development agency marketing its own build services, with no disclosed sample or method. Here is what is actually documented, and what a real figure would need.';
+
+const h1 = 'What AI implementation actually costs';
+
+const lead =
+  'There is no reliable public figure for what AI implementation costs, and this page will not invent one. Every page ranking for this question quotes a range with no disclosed sample, no defined scope and no method, which makes it marketing for the agency’s own build services rather than a finding. Anyone quoting you a number without showing their working is guessing, or selling.';
+
+const published = '2026-07-10';
+
+const citedIds = ['gartner-poc', 'ibm-ceo', 'hn-rag', 'hn-cron'];
+const cited = citedIds.map(getSource);
+
+const qa = [
+  {
+    q: 'What does AI implementation cost?',
+    a: 'There is no reliable public answer to that question. Every specific figure you have seen quoted for it was published by a vendor with build services to sell, not by a study with a disclosed sample, scope or method.',
+  },
+  {
+    q: 'Why won’t you give a ballpark figure?',
+    a: 'Because doing so would put us in exactly the position this page describes: quoting a number with no sample, no defined scope and no method behind it. That is guessing, not research, whoever does it.',
+  },
+  {
+    q: 'Is there any documented cost data at all?',
+    a: 'Only indirectly. Gartner names escalating costs among the reasons it forecasts abandonment of generative AI projects, and IBM’s survey of 2,000 CEOs found only 25% of AI initiatives delivered the ROI expected of them, with just 16% scaled enterprise wide. Neither publishes a cost figure. Both describe cost, and value that never arrived, as part of why projects fail.',
+  },
+  {
+    q: 'What does going over budget actually look like in practice?',
+    a: 'Two accounts, each from one practitioner, not a study. One describes an unsupervised agent cron job that spent $24.88 in two days with no cost guards and no human review. The other describes a consultant on several large retrieval chatbot rollouts hearing users say they see no value over ChatGPT, while the company carried five and six figure cloud bills.',
+  },
+  {
+    q: 'What would it take to publish a real figure?',
+    a: 'A sample of real projects, disclosed budgets, a definition of what counts as in scope, and a stated method for gathering it. Nobody has published that for AI implementation. Until someone does, every figure in circulation is either a guess or a sales pitch.',
+  },
+];
+
+const schema = [
+  breadcrumb([
+    { name: 'Home', path: '/' },
+    { name: 'AI implementation cost', path },
+  ]),
+  faqPage(qa),
+  {
+    '@type': 'Article',
+    '@id': `${SITE.url}${path}#article`,
+    headline: h1,
+    description,
+    author: { '@id': personId },
+    publisher: { '@id': orgId },
+    datePublished: published,
+    dateModified: published,
+    mainEntityOfPage: `${SITE.url}${path}`,
+    citation: cited.map((s) => s.url),
+    isBasedOn: cited.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      datePublished: String(s.year),
+      url: s.url,
+    })),
+  },
+];
+---
+
+<ArticleLayout
+  title={title}
+  description={description}
+  path={path}
+  h1={h1}
+  lead={lead}
+  datePublished={published}
+  dateModified={published}
+  schema={schema}
+  trail={[
+    { name: 'Home', path: '/' },
+    { name: 'AI implementation cost', path },
+  ]}
+>
+  <div class="rail-body">
+    <h2 id="no-credible-figure">Why no credible figure exists</h2>
+    <p>
+      "AI implementation" is not one thing with one price. It covers a single automation added to an
+      existing tool and it covers a multi-year, enterprise-wide programme, and the two have nothing in
+      common except the word AI. None of the major research bodies cited on this site, RAND, Gartner,
+      MIT, IBM or McKinsey, publish a cost figure for it, because none of them studied spend. They
+      studied adoption, failure and return, and cost turns up only as a named cause, never as a number.
+    </p>
+    <p>
+      Gartner names escalating costs among the reasons it forecasts that at least
+      <span class="num">30%</span> of generative AI projects will be abandoned after proof of concept.
+      That is a cause cited in a forecast, not a documented figure, and it is the closest thing to a
+      cost finding that a credible source publishes.
+    </p>
+  </div>
+  <CitationChip source="gartner-poc" />
+
+  <div class="rail-body">
+    <h2 id="vendor-ranges">What the vendor ranges actually are</h2>
+    <p>
+      Type this question into a search engine and almost everything that ranks is published by a
+      development agency, quoting a range for what a custom AI build costs. None of them discloses a
+      sample of projects, a definition of what counts as in scope, or a method for arriving at the
+      number. That is not research. It is content marketing for the same agency's own build services,
+      and the range exists to make whatever they eventually quote you look reasonable next to it.
+    </p>
+    <p>
+      We are not going to repeat one of those ranges here, not even to argue with it. Putting a figure
+      on the page, even inside a sentence that debunks it, is how vague estimates calcify into facts
+      that people later cite as if somebody had measured them. Describing the pattern is honest.
+      Attaching a number to it, for or against, is not.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="documented-costs">The costs that are documented</h2>
+    <p>
+      What is actually published sits one level away from a price tag. IBM surveyed
+      <span class="num">2,000</span> CEOs and found that only <span class="num">25%</span> of AI
+      initiatives had delivered the ROI expected of them, and just <span class="num">16%</span> had
+      scaled enterprise wide. MIT separately found that <span class="num">95%</span> of organisations
+      were getting zero return from generative AI. Neither is a cost figure. Both say the same thing
+      from a different angle: cost is only half the equation, and the other half is that the return
+      often does not arrive at all, whatever was spent to get there.
+    </p>
+  </div>
+  <CitationChip source="ibm-ceo" />
+
+  <div class="rail-body">
+    <h2 id="where-it-goes-wrong">Where money actually goes wrong</h2>
+    <p>
+      The documented failure conditions point at three specific gaps: no cost cap, no baseline metric,
+      and no funded route to production. Where those are missing, spend does not fail gracefully, it
+      simply keeps going. Two practitioner accounts, each one person's experience and not a study,
+      show what that looks like from the inside.
+    </p>
+    <p>
+      One account, posted to Hacker News, describes an unsupervised agent cron job that spent
+      <span class="num">$24.88</span> in two days, with no cost guards and no human review built in at
+      any point. Small money, and the account is offered as one anecdote about a missing cap, not a
+      finding about typical spend.
+    </p>
+  </div>
+  <CitationChip source="hn-cron" />
+
+  <div class="rail-body">
+    <p>
+      A second account, a comment from a consultant who had worked on several large retrieval chatbot
+      rollouts, describes users telling the business plainly that they saw no value over ChatGPT, while
+      the company was carrying five and six figure cloud bills for the system those users wanted
+      replaced. Again, one person's account of one pattern they had seen more than once, not a survey.
+      It is quoted for what it makes concrete, not for how common it is.
+    </p>
+  </div>
+  <CitationChip source="hn-rag" />
+
+  <div class="rail-body">
+    <h2 id="what-to-do-instead">What to do instead of asking for a number</h2>
+    <p>
+      Asking "what will this cost" is the wrong question when nobody credible can answer it. Three
+      things you can actually do instead, each one lifted straight from the checklist this site
+      publishes alongside this page: define the metric and its baseline before any spend is committed,
+      cap the spend at the provider with an alert to a named person rather than a monthly bill review,
+      and price the pilot on its own, not the programme it might one day become.
+    </p>
+    <p>
+      A funded, capped pilot with a named metric is a comparison you can actually make. A vendor's
+      unsourced range is not.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="what-a-real-figure-would-need">What we would need to publish a real figure</h2>
+    <p>
+      A sample of real projects, with their budgets disclosed rather than estimated after the fact. A
+      definition of what counts as in scope, so a chatbot wired to an existing helpdesk and a bespoke
+      model trained on proprietary data are not averaged into the same number. And a stated method for
+      how the projects were selected and the figures collected. Nobody has published that for AI
+      implementation, on any side of the market, including us.
+    </p>
+    <p>
+      Until somebody does, the honest version of this page is the one you are reading: what is
+      documented, what is not, and a refusal to fill the gap with a plausible-sounding guess.
+    </p>
+
+    <h2 id="faq">Questions, answered from the sources</h2>
+    {
+      qa.map(({ q, a }) => (
+        <div class="mt-8">
+          <h3>{q}</h3>
+          <p class="mt-2">{a}</p>
+        </div>
+      ))
+    }
+
+    <hr class="my-10" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+    <p class="text-sm">
+      Related: <a href="/build-vs-buy-ai">build versus buy</a>, where the same evidence points fairly
+      firmly in one direction. Back to <a href="/">the reconciled failure figures</a>.
+    </p>
+  </div>
+</ArticleLayout>

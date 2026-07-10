@@ -1,0 +1,252 @@
+---
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import CitationChip from '../components/CitationChip.astro';
+import { SITE, breadcrumb, faqPage, orgId, personId } from '../lib/site';
+import { getSource } from '../lib/sources';
+
+const path = '/build-vs-buy-ai';
+const title = 'Build vs buy AI: what the failure data implies | implementai.today';
+const description =
+  'No study in our corpus compared building AI in-house against buying it, head to head. The failure evidence we do have, an MIT adoption funnel and a Gartner cancellation forecast, loads against ambitious builds. This page says exactly how much weight that evidence can carry, and no more.';
+
+const h1 = 'Build or buy AI, judged by what actually fails';
+
+const lead =
+  'Nothing in the published research we cite directly compares the success rate of AI built in-house against AI bought off the shelf. What exists instead is failure evidence about each path separately: MIT\'s own adoption funnel shows custom, enterprise-grade tools reaching production far less often than general-purpose tools reach implementation, and Gartner expects over 40% of agentic AI projects to be cancelled by the end of 2027 over cost and unclear value. That is a real signal about risk. It is weaker than a direct comparison, and this page says so throughout rather than papering over it.';
+
+const published = '2026-07-10';
+
+const mit = getSource('mit-nanda');
+const gartner = getSource('gartner-agentic');
+const hnCron = getSource('hn-cron');
+const pageSources = [mit, gartner, hnCron];
+
+const qa = [
+  {
+    q: 'Should I build or buy AI?',
+    a: 'No study in our corpus answers that question directly, because none of them compared the two paths in the same research design. Read the failure data by path instead: MIT\'s adoption funnel and Gartner\'s cancellation forecast both load against ambitious, custom builds, but neither ran a controlled build-versus-buy comparison.',
+  },
+  {
+    q: 'Does MIT\'s data prove buying is safer than building?',
+    a: 'No. MIT\'s own words group "custom or vendor-sold" enterprise systems into a single bucket that reaches production 5% of the time, against 60% that evaluated one and 20% that reached a pilot. That figure describes build and buy struggling together at the ambitious end. It does not show buying beating building, because MIT never separated the two.',
+  },
+  {
+    q: "What does Gartner's 40% agentic AI forecast actually say?",
+    a: 'It is a forecast, not a measurement. Gartner predicts that over 40% of agentic AI projects will be cancelled by the end of 2027, due to escalating costs, unclear business value, or inadequate risk controls. It says nothing about whether the cancelled projects were built in-house or bought from a vendor.',
+  },
+  {
+    q: 'What is "agent washing"?',
+    a: 'Gartner\'s term for vendors marketing ordinary automation as agentic AI. Gartner estimates only about 130 of the thousands of vendors claiming agentic capability are real. That matters most for a buy decision specifically, since checking whether a vendor is one of the 130 is now part of the cost of buying.',
+  },
+  {
+    q: 'Is there evidence for a middle path, like assembling from existing tools rather than building from scratch?',
+    a: 'Not in the studies we cite; none of them tested that option. It is our own reasoning, offered as reasoning rather than as a finding: assembling a narrow workflow from existing pieces avoids the from-scratch build the failure data loads against, without handing the whole workflow to a single vendor either.',
+  },
+];
+
+const schema = [
+  breadcrumb([
+    { name: 'Home', path: '/' },
+    { name: 'AI implementation cost', path: '/ai-implementation-cost' },
+    { name: 'Build vs buy AI', path },
+  ]),
+  faqPage(qa),
+  {
+    '@type': 'Article',
+    '@id': `${SITE.url}${path}#article`,
+    headline: h1,
+    description,
+    author: { '@id': personId },
+    publisher: { '@id': orgId },
+    datePublished: published,
+    dateModified: published,
+    mainEntityOfPage: `${SITE.url}${path}`,
+    citation: pageSources.map((s) => s.url),
+    isBasedOn: pageSources.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      datePublished: String(s.year),
+      url: s.url,
+    })),
+  },
+];
+---
+
+<ArticleLayout
+  title={title}
+  description={description}
+  path={path}
+  h1={h1}
+  lead={lead}
+  datePublished={published}
+  dateModified={published}
+  schema={schema}
+  trail={[
+    { name: 'Home', path: '/' },
+    { name: 'AI implementation cost', path: '/ai-implementation-cost' },
+    { name: 'Build vs buy AI', path },
+  ]}
+>
+  <div class="rail-body">
+    <h2 id="the-real-question">What the question really is</h2>
+    <p>
+      "Build vs buy AI" gets asked as a cost question. It should be asked as a risk question.
+      Nobody in our corpus built the same AI capability twice, once in-house and once bought, and
+      compared the outcomes. What exists instead is failure and cancellation data about each path
+      counted separately, and it can be read for risk even though it was never designed to be a
+      scoreboard.
+    </p>
+    <p>
+      Say the limit plainly before anything else: no study we cite compares build and buy head to
+      head. Every figure on this page describes one path or the other, never both at once. Anyone
+      who tells you a study proves buying beats building, or the reverse, has not read the study.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="what-mit-implies">What MIT's funnel implies, and what it does not</h2>
+    <p>MIT Project NANDA's own words, on adoption of enterprise-grade tools:</p>
+    <p>
+      <em
+        >"Tools like ChatGPT and Copilot are widely adopted. Over 80 percent of organizations have
+        explored or piloted them, and nearly 40 percent report deployment. But these tools
+        primarily enhance individual productivity, not P&L performance. Meanwhile, enterprise-grade
+        systems, custom or vendor-sold, are being quietly rejected. Sixty percent of organizations
+        evaluated such tools, but only 20 percent reached pilot stage and just 5 percent reached
+        production."</em
+      >
+    </p>
+    <p>
+      Read that sentence again, closely. The bucket is "custom <em>or</em> vendor-sold". That is
+      one bucket, not two. MIT is not telling you that custom builds fail while vendor tools
+      succeed. It is telling you that anything beyond a general-purpose chatbot, built or bought,
+      struggles to reach production: <span class="num">60%</span> of organisations evaluated such a
+      tool, <span class="num">20%</span> reached a pilot, and <span class="num">5%</span> reached
+      production. If you came here hoping this figure proves buying is the safer path, it does not.
+      It shows a harder road for anything ambitious, on either path.
+    </p>
+    <p>
+      For the full working on why the "83% versus 5%" version of this comparison is misleading, and
+      what a like-for-like reading of MIT's own funnel actually supports, see
+      <a href="/why-ai-projects-fail/mit-nanda">the MIT 95% statistic, examined</a>. We are not
+      repeating that arithmetic here.
+    </p>
+  </div>
+  <CitationChip source="mit-nanda" />
+
+  <div class="rail-body">
+    <h2 id="when-building-is-defensible">When building is defensible</h2>
+    <p>
+      Building is easiest to defend when the scope is narrow: one workflow, one team, one metric
+      you already track, and a plan to kill the project if that metric does not move within a
+      quarter. That description does not appear in any of the reports cited on this page, because
+      none of them measured project scope as a variable. It is inference on our part, offered as
+      inference, not as a finding any of these studies produced.
+    </p>
+    <p>
+      What the studies do support is the shape of the failure mode to avoid. MIT's funnel loads
+      against ambitious, general-purpose "AI transformation" efforts far more than it loads against
+      a single well-defined task. Narrow the scope, and you are, at minimum, no longer the kind of
+      project this evidence is describing.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="cost-brake">The cost brake</h2>
+    <p>Gartner's forecast, on why agentic AI projects get cancelled:</p>
+    <p>
+      <em
+        >"Over 40% of agentic AI projects will be canceled by the end of 2027, due to escalating
+        costs, unclear business value or inadequate risk controls, according to Gartner, Inc."</em
+      >
+    </p>
+    <p>
+      That is a prediction, made in June 2025 about the end of 2027, not a measurement of anything
+      that has already happened. "Escalating costs" is the word Gartner uses in the abstract. One
+      practitioner account puts a number on it. On Hacker News, someone reported that an
+      unsupervised agent cron job spent <span class="num">$24.88</span> in two days, with no cost
+      guards and no human review. That is one incident, self-reported, not a study, and we are
+      citing it for how specific it is, not for how representative it might be. It is exactly the
+      shape of runaway spend Gartner names in the abstract.
+    </p>
+  </div>
+  <CitationChip source="gartner-agentic" />
+  <CitationChip source="hn-cron" />
+
+  <div class="rail-body">
+    <h2 id="agent-washing">Agent washing</h2>
+    <p>
+      If you are leaning toward buying rather than building, this cuts against you too. Gartner
+      estimates only about <span class="num">130</span> of the thousands of agentic AI vendors are
+      real, and it has a name for the rest: agent washing, the practice of marketing ordinary
+      automation as agentic AI. Buying is not automatically the safer branch. Confirming that a
+      vendor is one of the roughly <span class="num">130</span> is now part of the cost of buying,
+      not a step you can skip.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="checklist">A decision checklist</h2>
+    <ul>
+      <li>
+        Can you name the one profit and loss line this is supposed to move? MIT's
+        <span class="num">95%</span> describes organisations that could not answer that question about
+        their generative AI spend.
+      </li>
+      <li>
+        Is the project scoped to one workflow, or is it an "AI transformation"? The funnel evidence
+        loads against the ambitious end regardless of who builds it.
+      </li>
+      <li>
+        Have you priced the failure mode as well as the success mode? Gartner names escalating
+        costs as a reason agentic projects get cancelled, not only poor results.
+      </li>
+      <li>
+        If you are buying, can you confirm the vendor is not agent washing? Gartner's own estimate
+        puts the real count at about 130 out of thousands.
+      </li>
+      <li>
+        Is there a kill date and a named metric, before you start? Nothing in our corpus measured
+        this directly. It is our own recommendation, stated as one, not a finding from any study
+        above.
+      </li>
+    </ul>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="assemble">Assembling instead of building from scratch</h2>
+    <p>
+      None of the studies above tested whether assembling a narrow workflow from existing pieces
+      changes the odds. We think it plausibly sits between the two failure modes MIT describes: it
+      avoids the from-scratch build the funnel loads against, and it avoids handing the whole
+      workflow to a single vendor's black box. If you are at the "building is defensible" end of
+      this page, workflow tools such as <a href="https://n8n.io" data-aff="pending">n8n</a> and
+      <a href="https://www.make.com" data-aff="pending">Make.com</a> let you assemble the workflow
+      rather than write the plumbing, and a plain server on
+      <a href="https://www.digitalocean.com" data-aff="pending">DigitalOcean</a> is enough to host the
+      result without taking on a platform contract. Some of these links may become affiliate links
+      later. Nothing here was paid for.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="faq">Questions, answered from the sources</h2>
+    {
+      qa.map(({ q, a }) => (
+        <div class="mt-8">
+          <h3>{q}</h3>
+          <p class="mt-2">{a}</p>
+        </div>
+      ))
+    }
+
+    <hr class="my-10" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+    <p class="text-sm">
+      Up: <a href="/ai-implementation-cost">AI implementation cost</a>. Also on this thread:
+      <a href="/ai-implementation-checklist">the AI implementation checklist</a>, and
+      <a href="/why-ai-projects-fail/mit-nanda">the MIT 95% statistic, examined</a>, for the funnel
+      figures used above.
+    </p>
+  </div>
+</ArticleLayout>

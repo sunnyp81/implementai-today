@@ -1,0 +1,324 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import CitationChip from '../../components/CitationChip.astro';
+import { SITE, breadcrumb, faqPage, orgId, personId } from '../../lib/site';
+import { getSource } from '../../lib/sources';
+
+const path = '/why-ai-projects-fail/mit-nanda';
+const title = 'The MIT 95% statistic on generative AI, examined | implementai.today';
+const description =
+  "MIT Project NANDA's headline finding, that 95% of organisations are getting zero return from generative AI, is real. The comparison usually bolted onto it, 83% against 5%, is not a fair one. We read the report and show what each number actually counts.";
+
+const h1 = 'The MIT report behind the 95% statistic';
+
+const lead =
+  'MIT Project NANDA\'s GenAI Divide report really does say that 95% of organisations are getting zero return from generative AI. It does not say that 95% of pilots fail, and the "83% versus 5%" comparison usually quoted alongside it sets two different denominators side by side as though they were the same measurement. The report is also not hosted, as far as we could find, on any MIT or Project NANDA domain, and it has not been peer reviewed.';
+
+const published = '2026-07-10';
+
+const mit = getSource('mit-nanda');
+const rand = getSource('rand-failure');
+const pageSources = [mit, rand];
+
+const qa = [
+  {
+    q: "What does MIT's 95% AI statistic actually mean?",
+    a: '95% is the share of organisations MIT Project NANDA reviewed that are getting zero return from generative AI. It is not the share of pilots that failed, and it is not a claim about individual projects. A tool can be built, shipped and used daily, and still count inside the 95% if it never shows up on the profit and loss statement.',
+  },
+  {
+    q: 'Is the "83% versus 5%" comparison a fair one?',
+    a: "No. The 83% is a pilot-to-implementation rate for general-purpose tools such as ChatGPT and Copilot. The 5% is the share of all organisations that evaluated a custom or vendor-sold enterprise tool and reached production, a much larger starting group. On a like-for-like pilot-to-production basis, MIT's own figures put embedded custom tools nearer 25%, not 5%.",
+  },
+  {
+    q: 'Is the MIT GenAI Divide report peer reviewed?',
+    a: "No. We could not find it hosted on any MIT domain or any Project NANDA domain either, and read it from a third-party mirror. That does not make the underlying interviews or the review of over 300 public initiatives worthless, but the figure carries less institutional backing than the phrase 'an MIT report' implies.",
+  },
+  {
+    q: "How does MIT's 95% compare with RAND's AI project failure rate?",
+    a: 'They measure different things. RAND says that, by some estimates, more than 80% of AI projects fail, about twice the rate of non-AI IT projects. MIT says 95% of organisations get zero return from generative AI specifically. See /ai-project-failure-rate for the full reconciliation of every widely quoted figure in this field.',
+  },
+  {
+    q: "What is MIT's 'learning gap'?",
+    a: 'It is MIT\'s own term, used as a section title in the report, for what it argues is the real barrier to scaling generative AI: most systems do not retain feedback, adapt to context, or improve over time. It is the report\'s explanation for the 95%, not a separately measured statistic.',
+  },
+];
+
+const schema = [
+  breadcrumb([
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path: '/why-ai-projects-fail' },
+    { name: 'The MIT 95% statistic', path },
+  ]),
+  faqPage(qa),
+  {
+    '@type': 'Article',
+    '@id': `${SITE.url}${path}#article`,
+    headline: h1,
+    description,
+    author: { '@id': personId },
+    publisher: { '@id': orgId },
+    datePublished: published,
+    dateModified: published,
+    mainEntityOfPage: `${SITE.url}${path}`,
+    citation: pageSources.map((s) => s.url),
+    isBasedOn: pageSources.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      datePublished: String(s.year),
+      url: s.url,
+    })),
+  },
+  {
+    '@type': 'Dataset',
+    '@id': `${SITE.url}${path}#dataset`,
+    name: "MIT Project NANDA's GenAI Divide figures, reconciled to the primary report",
+    description:
+      "A breakdown of the headline 95% figure, MIT's own adoption funnel for custom and vendor-sold enterprise tools, and the pilot-to-implementation rate it quotes for general-purpose tools, checked against the primary PDF. implementai.today ran no research of its own.",
+    creator: { '@id': orgId },
+    isAccessibleForFree: true,
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    temporalCoverage: '2025',
+    measurementTechnique:
+      "compilation of a single research report's published figures, checked against the primary PDF",
+    citation: pageSources.map((s) => s.url),
+    isBasedOn: pageSources.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      url: s.url,
+    })),
+    variableMeasured: [
+      {
+        '@type': 'PropertyValue',
+        name: 'Organisations getting zero return from generative AI (MIT Project NANDA, 2025)',
+        value: '95%',
+        measurementTechnique: mit.method,
+      },
+      {
+        '@type': 'PropertyValue',
+        name: 'Custom or vendor-sold enterprise tools: organisations that evaluated one',
+        value: '60%',
+        measurementTechnique: mit.method,
+      },
+      {
+        '@type': 'PropertyValue',
+        name: 'Custom or vendor-sold enterprise tools: organisations that reached pilot stage',
+        value: '20%',
+        measurementTechnique: mit.method,
+      },
+      {
+        '@type': 'PropertyValue',
+        name: 'Custom or vendor-sold enterprise tools: organisations that reached production',
+        value: '5%',
+        measurementTechnique: mit.method,
+      },
+      {
+        '@type': 'PropertyValue',
+        name: 'General-purpose tools (ChatGPT, Copilot): pilot-to-implementation rate',
+        value: '~83%',
+        measurementTechnique: mit.method,
+      },
+    ],
+    distribution: {
+      '@type': 'DataDownload',
+      encodingFormat: 'application/json',
+      contentUrl: `${SITE.url}/data/ai-failure-rates.json`,
+    },
+  },
+];
+---
+
+<ArticleLayout
+  title={title}
+  description={description}
+  path={path}
+  h1={h1}
+  lead={lead}
+  datePublished={published}
+  dateModified={published}
+  schema={schema}
+  trail={[
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path: '/why-ai-projects-fail' },
+    { name: 'MIT 95% statistic', path },
+  ]}
+>
+  <div class="rail-body">
+    <h2 id="what-it-says">What the report actually says</h2>
+    <p>
+      Start with the sentence itself, because almost nobody who cites it has read past it. MIT
+      Project NANDA's report, <em>The GenAI Divide: State of AI in Business 2025</em>, states:
+    </p>
+    <p>
+      <em
+        >"Despite $30 to 40 billion in enterprise investment into GenAI, this report uncovers a
+        surprising result in that 95% of organizations are getting zero return."</em
+      >
+      (Punctuation normalised, wording unchanged: the original prints the dollar range with a dash.)
+    </p>
+    <p>
+      Read that sentence again and notice what it is not saying. It does not say 95% of pilots
+      fail. It says <span class="num">95%</span> of organisations are getting zero return, against
+      an outlay MIT puts at <span class="num">$30</span> to <span class="num">$40</span> billion.
+      Zero return and pilot failure are different things, and the rest of this page is mostly about
+      that gap.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="method">The method, and the sample behind it</h2>
+    <p>MIT describes its own method plainly:</p>
+    <p>
+      <em
+        >"This report is based on a multi-method research design that includes a systematic review
+        of over 300 publicly disclosed AI initiatives, structured interviews with representatives
+        from 52 organizations, and survey responses from 153 senior leaders collected across four
+        major industry conferences."</em
+      >
+    </p>
+    <p>
+      That is three different instruments stitched into one report: a desk review of
+      <span class="num">300</span>+ public initiatives, interviews with
+      <span class="num">52</span> organisations, and a survey of
+      <span class="num">153</span> senior leaders reached at
+      <span class="num">4</span> industry conferences. Worth holding onto that last detail. People
+      who attend AI conferences are not a random sample of business leaders, and MIT does not claim
+      they are. Treat the survey slice as opinion from an AI-forward crowd, not a population
+      estimate.
+    </p>
+  </div>
+  <CitationChip source="mit-nanda" />
+
+  <div class="rail-body">
+    <h2 id="learning-gap">The learning gap, in MIT's own words</h2>
+    <p>MIT's stated cause, and it is a claim rather than a separately measured figure:</p>
+    <p>
+      <em
+        >"The core barrier to scaling is not infrastructure, regulation, or talent. It is learning.
+        Most GenAI systems do not retain feedback, adapt to context, or improve over time."</em
+      >
+    </p>
+    <p>
+      "Learning gap" is MIT's own term, not a journalist's shorthand: it is the title of the
+      report's own section, "Why Pilots Stall: The Learning Gap Behind the Divide". Worth naming it
+      for what it is even so. It is MIT's explanation for the 95%, offered by the same team that
+      measured the 95%. That does not make it wrong. It is not an independently audited root cause
+      either.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="denominator-trap">The denominator trap</h2>
+    <p>
+      Here is the comparison that actually travels: general-purpose tools succeed roughly
+      <span class="num">83%</span> of the time, custom tools succeed
+      <span class="num">5%</span> of the time. It sounds like one measurement with two results. It
+      is two measurements with two different denominators, placed next to each other as though they
+      answered the same question.
+    </p>
+    <p>MIT's own words, on general-purpose tools against custom or vendor-sold ones:</p>
+    <p>
+      <em
+        >"Tools like ChatGPT and Copilot are widely adopted. Over 80 percent of organizations have
+        explored or piloted them, and nearly 40 percent report deployment. But these tools
+        primarily enhance individual productivity, not P&L performance. Meanwhile, enterprise-grade
+        systems, custom or vendor-sold, are being quietly rejected. Sixty percent of organizations
+        evaluated such tools, but only 20 percent reached pilot stage and just 5 percent reached
+        production."</em
+      >
+    </p>
+    <p>And, on the general-purpose figure specifically:</p>
+    <p>
+      <em
+        >"Generic LLM chatbots appear to show high pilot-to-implementation rates (~83%). However,
+        this masks a deeper split in perceived value."</em
+      >
+    </p>
+    <p>
+      Line the denominators up. The <span class="num">83%</span> is a pilot-to-implementation rate:
+      of the organisations that piloted a general-purpose tool, most went on to some form of
+      implementation. The <span class="num">5%</span> is not that. It is the share of
+      <em>all</em> organisations that evaluated a custom or vendor-sold enterprise tool and reached
+      production, out of the full funnel MIT describes: <span class="num">60%</span> evaluated one,
+      <span class="num">20%</span> reached pilot stage, and <span class="num">5%</span> reached
+      production.
+    </p>
+    <p>
+      Run the same division MIT ran for the general-purpose figure, pilot stage to production
+      rather than evaluation to production, and the gap narrows: <span class="num">5</span> of the
+      <span class="num">20</span> organisations that reached a pilot went on to production, which is
+      <span class="num">25%</span>, not <span class="num">5%</span>. Set against a pilot-to-
+      implementation rate near <span class="num">80%</span> for general-purpose tools, that is still
+      a real gap. It is nothing like sixteen to one, which is what the uncorrected comparison
+      implies.
+    </p>
+    <p>
+      One more honest note. MIT's own bucket is "custom or vendor-sold", not "custom" on its own,
+      so this figure does not by itself separate a bespoke build from a purchased enterprise tool.
+      That question, build against buy, gets its own page:
+      <a href="/build-vs-buy-ai">build vs buy AI</a>.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="percentage-of-what">What "95%" is a percentage of</h2>
+    <p>
+      Worth stating in one place, because it is the fact most likely to get flattened in the
+      retelling. The <span class="num">95%</span> is organisations, not projects. It is zero
+      return, not failure to ship. An organisation can deploy a working generative AI tool, keep it
+      running, and still land inside the 95% if that tool never moves the profit and loss
+      statement. MIT's own sentence draws the line precisely: organisations getting zero return,
+      full stop.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="provenance">The provenance problem</h2>
+    <p>
+      One more thing before you cite this anywhere. This is universally called "the MIT report".
+      We could not find it hosted on any MIT domain, or any Project NANDA domain, and read the copy
+      that exists from a third-party mirror. It has not been peer reviewed. None of that makes the
+      underlying interviews, or the review of over 300 public initiatives, worthless. But a report
+      that does not host its own PDF on its own website is not behaving like the institution whose
+      name is doing most of the work when it gets quoted. Treat every figure in it, including the
+      ones on this page, as contested until MIT publishes it directly.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="reconciliation">Reconciling MIT with RAND</h2>
+    <p>
+      MIT's <span class="num">95%</span> and RAND's more than
+      <span class="num">80%</span> are both real, and they are not the same measurement. RAND
+      counts projects that fail: by some estimates, more than 80% of AI projects fail, about twice
+      the rate of non-AI IT projects. MIT counts organisations getting zero return from generative
+      AI specifically. A business can run several AI projects, watch most of them fail by RAND's
+      count, and still sit inside or outside MIT's 95% depending only on whether generative AI moved
+      its numbers at all. For the full table showing every widely quoted failure and adoption
+      figure next to what it actually measures, see <a href="/ai-project-failure-rate"
+        >the AI project failure rate, reconciled</a
+      >. We are not restating that table here.
+    </p>
+  </div>
+  <CitationChip source="rand-failure" />
+
+  <div class="rail-body">
+    <h2 id="faq">Questions, answered from the sources</h2>
+    {
+      qa.map(({ q, a }) => (
+        <div class="mt-8">
+          <h3>{q}</h3>
+          <p class="mt-2">{a}</p>
+        </div>
+      ))
+    }
+
+    <hr class="my-10" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+    <p class="text-sm">
+      Up: <a href="/why-ai-projects-fail">why AI projects fail</a>. Also on this thread:
+      <a href="/why-ai-projects-fail/rand">RAND's failure report</a>, read the same way, and
+      <a href="/build-vs-buy-ai">build vs buy AI</a>, on what this funnel does and does not settle.
+    </p>
+  </div>
+</ArticleLayout>

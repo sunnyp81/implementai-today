@@ -1,0 +1,291 @@
+---
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import CitationChip from '../../components/CitationChip.astro';
+import { SITE, breadcrumb, faqPage, orgId, personId } from '../../lib/site';
+import { getSource } from '../../lib/sources';
+
+const path = '/why-ai-projects-fail/rand';
+const title = 'Why AI projects fail: the RAND study, in full | implementai.today';
+const description =
+  "RAND's RRA2680-1 is the primary source behind most \"AI projects fail\" statistics, and rand.org returns an HTTP 403 to automated readers. Its method, its actual figures, and the claims now circulating under its name that it never made.";
+
+const h1 = 'The RAND study on why AI projects fail';
+
+const lead =
+  'RAND\'s 2024 report RRA2680-1, "The Root Causes of Failure for Artificial Intelligence Projects and How They Can Succeed," is the primary source behind most "AI projects fail" statistics you will read elsewhere, and rand.org returns an HTTP 403 to automated readers, so most of those retellings were never checked against it. Based on 65 semi-structured interviews between August and December 2023, RAND writes that, by some estimates, more than 80% of AI projects fail, about twice the rate of non-AI IT projects, and names five root causes that are organisational rather than technical. It contains no decimal-precision failure rate and no four-way outcome breakdown, though both now circulate under its name. Its real 84% figure records what 65 interviewees cited as the primary reason projects fail, which is not the same as measuring what caused them.';
+
+const published = '2026-07-10';
+
+const cited = ['rand-failure', 'rand-leadership'].map((id) => getSource(id));
+
+const qa = [
+  {
+    q: 'What did RAND actually study?',
+    a: '65 semi-structured interviews, 50 with industry professionals and 15 with academic researchers, conducted between August and December 2023, published as RRA2680-1 in 2024. It is a qualitative study of what practitioners said about AI project failure, not a count of projects or an analysis of outcome data.',
+  },
+  {
+    q: 'Does RAND say 80.3% of AI projects fail?',
+    a: 'No. RAND writes "by some estimates, more than 80 percent," a hedge with no decimal place and no single named source for the estimate. The 80.3% figure appears in no RAND publication.',
+  },
+  {
+    q: 'Does RAND publish a breakdown of AI project outcomes?',
+    a: "No. The four-way split sometimes attributed to RAND, projects abandoned, delivering no value, partially successful, or fully successful, does not appear in RRA2680-1, and RAND's interview method could not have produced a quantified breakdown like it.",
+  },
+  {
+    q: "What does RAND's 84% figure actually measure?",
+    a: "The share of RAND's 65 interviewees who named a leadership-driven cause as the primary reason AI projects fail. It is a survey of opinion among a fixed, small sample, not a measurement of how often leadership causes failure across the industry. A second, unrelated 84% figure, from Cisco's AI Readiness Index, appears in the same report and is often confused with it.",
+  },
+  {
+    q: 'Why does rand.org return an error when I try to read the report?',
+    a: 'rand.org returns an HTTP 403 to automated readers, which is why so many summaries of this report were written without anyone reading it directly. The quotes on this page were checked against the primary text on 2026-07-10.',
+  },
+];
+
+const schema = [
+  breadcrumb([
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path: '/why-ai-projects-fail' },
+    { name: 'The RAND study', path },
+  ]),
+  faqPage(qa),
+  {
+    '@type': 'Article',
+    '@id': `${SITE.url}${path}#article`,
+    headline: h1,
+    description,
+    author: { '@id': personId },
+    publisher: { '@id': orgId },
+    datePublished: published,
+    dateModified: published,
+    mainEntityOfPage: `${SITE.url}${path}`,
+    citation: cited.map((s) => s.url),
+    isBasedOn: cited.map((s) => ({
+      '@type': 'CreativeWork',
+      name: s.title,
+      author: { '@type': 'Organization', name: s.org },
+      datePublished: String(s.year),
+      url: s.url,
+    })),
+  },
+  {
+    '@type': 'Dataset',
+    '@id': `${SITE.url}${path}#dataset`,
+    name: "RAND RRA2680-1 AI project failure figures, checked against the primary text",
+    description:
+      "The specific failure-rate and leadership-attribution figures from RAND's 2024 report on AI project failure, with the exact wording RAND used and a record of the versions that circulate but do not appear in the report.",
+    creator: { '@id': orgId },
+    isAccessibleForFree: true,
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    temporalCoverage: '2023/2024',
+    measurementTechnique: "compilation of a single research report's published wording, checked against the primary text",
+    citation: [cited[0].url],
+    isBasedOn: {
+      '@type': 'CreativeWork',
+      name: cited[0].title,
+      author: { '@type': 'Organization', name: 'RAND' },
+      url: cited[0].url,
+    },
+    variableMeasured: [
+      {
+        '@type': 'PropertyValue',
+        name: "AI project failure rate, RAND's characterisation of external estimates",
+        value: 'more than 80%',
+        measurementTechnique:
+          'semi-structured interviews; RAND is characterising other estimates, not reporting a figure it calculated itself',
+      },
+      {
+        '@type': 'PropertyValue',
+        name: 'Interviewees naming a leadership-driven root cause as primary',
+        value: '84%',
+        measurementTechnique: 'semi-structured interviews with 65 industry and academic experts',
+      },
+    ],
+    distribution: {
+      '@type': 'DataDownload',
+      encodingFormat: 'application/json',
+      contentUrl: `${SITE.url}/data/ai-failure-rates.json`,
+    },
+  },
+];
+---
+
+<ArticleLayout
+  title={title}
+  description={description}
+  path={path}
+  h1={h1}
+  lead={lead}
+  datePublished={published}
+  dateModified={published}
+  schema={schema}
+  trail={[
+    { name: 'Home', path: '/' },
+    { name: 'Why AI projects fail', path: '/why-ai-projects-fail' },
+    { name: 'The RAND study', path },
+  ]}
+>
+  <div class="rail-body">
+    <h2 id="method">What RAND actually did</h2>
+    <p>
+      RAND Corporation published RRA2680-1 in <span class="num">2024</span>. The method was
+      <span class="num">65</span> semi-structured interviews, <span class="num">50</span> with
+      industry professionals and <span class="num">15</span> with academic researchers, conducted
+      between August and December <span class="num">2023</span>. That is the whole dataset: what a
+      set of practitioners and researchers said in conversation, not a count of projects, an
+      analysis of postmortems, or a statistical model of failure.
+    </p>
+    <p>
+      That method matters for how much weight the figures can carry.
+      <span class="num">65</span> structured conversations can surface real, recurring patterns,
+      which is what the five root causes are. They cannot produce a precise industry-wide failure
+      percentage, and they cannot produce a quantified breakdown of how AI projects end. Anyone
+      citing RAND for either of those two things is citing a method the report does not have.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="headline-figure">The headline figure, in RAND's own words</h2>
+    <p>
+      RAND's own sentence:
+      <em>
+        "by some estimates, more than 80 percent of AI projects fail, twice the rate of failure for
+        information technology projects that do not involve AI."
+      </em>
+      Read the hedge. RAND is reporting what "some estimates" say, not a figure it calculated from
+      its own interviews. The 65 conversations back the qualitative pattern of causes; they are not
+      the source of the 80 percent number.
+    </p>
+    <p>
+      This is the only place in the report where a failure percentage appears. There is no decimal
+      point, no second figure, and no breakdown of what "fail" means beyond the general sense used
+      throughout the report: a project that did not deliver on what it set out to do.
+    </p>
+  </div>
+  <CitationChip source="rand-failure" />
+
+  <div class="rail-body">
+    <h2 id="84-percent">The 84% figure, and the leadership finding</h2>
+    <p>
+      RAND's most consequential sentence:
+      <em>
+        "More than any other type of issue, our interviewees noted that failures driven by the
+        decisions and expectations of the organization's business leadership were far and away the
+        most frequent causes of project failure. Eighty-four percent of our interviewees cited one
+        or more of these root causes as the primary reason that AI projects would fail."
+      </em>
+    </p>
+    <p>
+      That is <span class="num">84%</span> of <span class="num">65</span> people, describing which
+      cause they saw most often. RAND breaks the leadership-driven category into four sub-causes:
+      optimising for the wrong business problem, using AI to solve problems that were already simple
+      to solve, overconfidence in what AI can do, and underestimating the time a project takes. All
+      four are decisions made by the people managing the project, before or during the build, not
+      failures of the model itself.
+    </p>
+  </div>
+  <CitationChip source="rand-leadership" />
+
+  <div class="rail-body">
+    <h2 id="academia-vs-industry">Academia and industry fail for different reasons</h2>
+    <p>
+      RAND interviewed both groups and did not treat their findings as one. On academic projects, it
+      writes:
+      <em>
+        "In our interviews, we learned that when AI projects fail, they do so because of a
+        misalignment in incentives rather than an overall technical barrier to product delivery. In
+        short, overcoming an AI failure is more about humans than the machines."
+      </em>
+      On industry projects, its closest equivalent is narrower:
+      <em>
+        "Overall, interviewees expressed that the most common root cause of failure was the business
+        leadership of the organization misunderstanding how to set the project on a pathway to
+        success."
+      </em>
+    </p>
+    <p>
+      Both quotes point at people rather than models, and both tend to get flattened, in retelling,
+      into the same generic line about AI failure being a people problem rather than a technology
+      problem. That collapses two distinct findings, from two distinct populations, into one. Use the
+      industry line for industry claims and the academic line for academic ones. RAND does not use
+      them interchangeably, and neither should anyone quoting it.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="recommendations">What RAND recommends</h2>
+    <p>Five principles for industry, in RAND's wording:</p>
+    <ul>
+      <li>Ensure that technical staff understand the project purpose and domain context</li>
+      <li>Choose enduring problems</li>
+      <li>Focus on the problem, not the technology</li>
+      <li>Invest in infrastructure</li>
+      <li>Understand AI's limitations</li>
+    </ul>
+    <p>
+      For academic teams, two more: overcome data-collection barriers through partnerships with
+      government, and expand doctoral programs in data science for practitioners.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="what-rand-did-not-say">What RAND did not say</h2>
+    <p>
+      Three specific claims circulate under RAND's name. We checked all three against the primary
+      text. None of them is there.
+    </p>
+
+    <h3>"80.3% of AI projects fail"</h3>
+    <p>
+      This is the figure you have most likely seen, often presented with the confidence of a
+      measured statistic. RAND's actual wording is "by some estimates, more than 80 percent," a
+      hedge on someone else's estimate, with no decimal place and no single named source for the
+      "some estimates". <span class="num num-danger">80.3%</span> appears nowhere in RRA2680-1.
+    </p>
+
+    <h3>The four-way outcome breakdown</h3>
+    <p>
+      A tidy split often attributed to RAND: <span class="num num-danger">33.8%</span> of projects
+      abandoned, <span class="num num-danger">28.4%</span> delivering no value,
+      <span class="num num-danger">18.1%</span> partially successful, and
+      <span class="num num-danger">19.7%</span> succeeding. It appears nowhere in the report, and
+      RAND's method could not have produced it: 65 semi-structured interviews yield themes and
+      quotes, not a quantified taxonomy of outcomes across an industry. The four numbers sum to
+      exactly <span class="num">100.0%</span>, which is what fabricated data tends to do, and which
+      real survey data, with its rounding and non-response, rarely does so neatly.
+    </p>
+
+    <h3>The 84% conflation</h3>
+    <p>
+      The 84% you will see quoted as "84% of AI project failures are caused by leadership" is real,
+      but narrower: it is the share of RAND's 65 interviewees who named a leadership-driven cause as
+      the primary one. It describes an opinion split among a small expert sample, not an audit of the
+      industry. To make it more confusing, a second, unrelated 84% sits in the same report, taken
+      from Cisco's AI Readiness Index:
+      <em>
+        "84 percent of business leaders responded that they believe that AI will have a significant
+        impact on their business, and 97 percent of business leaders reported that the urgency to
+        deploy AI-powered technologies has increased."
+      </em>
+      Two different 84% figures, describing two different things, in one document.
+    </p>
+  </div>
+
+  <div class="rail-body">
+    <h2 id="faq">Questions, answered from the primary text</h2>
+    {
+      qa.map(({ q, a }) => (
+        <div class="mt-8">
+          <h3>{q}</h3>
+          <p class="mt-2">{a}</p>
+        </div>
+      ))
+    }
+
+    <hr class="my-10" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+    <p class="text-sm">
+      Related: the <a href="/why-ai-projects-fail">practitioner summary of why AI projects fail</a>,
+      and <a href="/why-ai-projects-fail/mit-nanda">MIT's report on the generative AI learning
+      gap</a>, which gets the same source-checking treatment.
+    </p>
+  </div>
+</ArticleLayout>
