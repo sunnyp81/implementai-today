@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { SITE, NAV } from '../lib/site';
+import { SOURCES, DRIFTED } from '../lib/sources';
 
 interface Props {
   title: string;
@@ -16,6 +17,8 @@ const { title, description, path, schema = [], noindex = false } = Astro.props;
 const canonical = `${SITE.url}${path}`;
 const graph = schema.length ? { '@context': 'https://schema.org', '@graph': schema } : null;
 const year = new Date().getFullYear();
+const totalSources = SOURCES.length;
+const drifted = DRIFTED.length;
 ---
 
 <!doctype html>
@@ -45,12 +48,15 @@ const year = new Date().getFullYear();
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="border-b" style="border-color: var(--color-hairline)">
+    <header
+      class="z-40 border-b sm:sticky sm:top-0"
+      style="border-color: var(--color-hairline); background: var(--color-bg)"
+    >
       <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3.5">
         <a
           href="/"
           class="no-underline"
-          style="font-family: var(--font-mono); color: var(--color-ink); font-weight: 600; letter-spacing: -0.02em;"
+          style="background-image: none; font-family: var(--font-mono); color: var(--color-ink); font-weight: 600; font-size: 1.02rem; letter-spacing: -0.02em;"
         >
           implementai<span style="color: var(--color-accent)">.today</span>
         </a>
@@ -62,8 +68,8 @@ const year = new Date().getFullYear();
                 <li>
                   <a
                     href={item.href}
-                    class="no-underline hover:underline"
-                    style="color: var(--color-muted)"
+                    class="no-underline"
+                    style={`background-image: none; color: ${path === item.href ? 'var(--color-accent)' : 'var(--color-muted)'}`}
                     aria-current={path === item.href ? 'page' : undefined}
                   >
                     {item.label}
@@ -76,7 +82,19 @@ const year = new Date().getFullYear();
 
         <a href="/ai-project-risk-diagnostic" class="btn btn-primary ml-auto text-sm">
           Free risk diagnostic
+          <span class="btn-arrow" aria-hidden="true">&rarr;</span>
         </a>
+      </div>
+
+      <!-- Status ticker: the value proposition, always in view. Hidden on the smallest screens to keep the sticky header slim. -->
+      <div class="hidden border-t sm:block" style="border-color: var(--color-hairline); background: var(--color-surface)">
+        <div class="mx-auto flex max-w-6xl items-center gap-x-5 gap-y-1 overflow-x-auto whitespace-nowrap px-4 py-1.5">
+          <span class="ticker" style="color: var(--color-accent)">&#9679; live corpus</span>
+          <span class="ticker"><b class="num">{totalSources}</b> primary sources</span>
+          <span class="ticker"><b class="num" style="color: var(--color-danger)">{drifted}</b> misquoted in the wild</span>
+          <span class="ticker">every figure links its source</span>
+          <span class="ticker" style="margin-left: auto">checked <b class="num">2026-07-10</b></span>
+        </div>
       </div>
     </header>
 
@@ -84,32 +102,49 @@ const year = new Date().getFullYear();
       <slot />
     </main>
 
-    <footer class="mt-24 border-t" style="border-color: var(--color-hairline)">
-      <div class="mx-auto max-w-6xl px-4 py-10">
-        <p class="overline">Standing disclosure</p>
-        <p class="mt-2 max-w-2xl text-sm" style="color: var(--color-muted)">
-          {SITE.disclosure}
-        </p>
+    <footer class="mt-28 border-t" style="border-color: var(--color-hairline)">
+      <div class="rule-ticks"></div>
+      <div class="grid-bg">
+        <div class="mx-auto max-w-6xl px-4 py-12">
+          <div class="grid gap-10 md:grid-cols-[1.4fr_1fr]">
+            <div>
+              <a
+                href="/"
+                class="no-underline"
+                style="background-image: none; font-family: var(--font-mono); color: var(--color-ink); font-weight: 600; font-size: 1.05rem; letter-spacing: -0.02em;"
+              >
+                implementai<span style="color: var(--color-accent)">.today</span>
+              </a>
+              <p class="mt-3 max-w-md text-sm" style="color: var(--color-ink)">{SITE.tagline}</p>
+              <p class="overline overline-tick overline-muted mt-6">Standing disclosure</p>
+              <p class="mt-2 max-w-lg text-sm" style="color: var(--color-muted)">
+                {SITE.disclosure}
+              </p>
+            </div>
 
-        <nav aria-label="Footer" class="mt-8">
-          <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-            {
-              NAV.map((item) => (
-                <li>
-                  <a href={item.href} style="color: var(--color-muted)">
-                    {item.label}
-                  </a>
-                </li>
-              ))
-            }
-            <li><a href="/about" style="color: var(--color-muted)">About and method</a></li>
-          </ul>
-        </nav>
+            <nav aria-label="Footer">
+              <p class="overline overline-muted">Pages</p>
+              <ul class="mt-3 grid gap-y-2 text-sm">
+                {
+                  NAV.map((item) => (
+                    <li>
+                      <a href={item.href} class="no-underline" style="background-image: none; color: var(--color-muted)">
+                        {item.label}
+                      </a>
+                    </li>
+                  ))
+                }
+                <li><a href="/about" class="no-underline" style="background-image: none; color: var(--color-muted)">About and method</a></li>
+              </ul>
+            </nav>
+          </div>
 
-        <p class="mt-8 text-xs" style="color: var(--color-muted)">
-          <span class="num">&copy; {year}</span> {SITE.brand}. Written by
-          <a href="/about">{SITE.author.name}</a>. Figures belong to the organisations that published them.
-        </p>
+          <hr class="mt-10" />
+          <p class="mt-6 text-xs" style="color: var(--color-muted)">
+            <span class="num">&copy; {year}</span> {SITE.brand}. Written by
+            <a href="/about">{SITE.author.name}</a>. Figures belong to the organisations that published them.
+          </p>
+        </div>
       </div>
     </footer>
   </body>

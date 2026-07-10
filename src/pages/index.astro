@@ -42,20 +42,20 @@ const schema = [
 
 <Base title={title} description={description} path={path} schema={schema}>
   <!-- Hero: the number everyone quotes, and the fact that nobody published it. -->
-  <section class="border-b" style="border-color: var(--color-hairline)">
-    <div class="mx-auto grid max-w-6xl gap-12 px-4 py-16 lg:grid-cols-[1.15fr_1fr] lg:py-24">
+  <section class="grid-bg border-b" style="border-color: var(--color-hairline)">
+    <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 lg:grid-cols-[1.1fr_1fr] lg:py-24">
       <div>
-        <p class="overline">Primary sources. Methodology shown.</p>
+        <p class="overline overline-tick">Primary sources. Methodology shown.</p>
 
-        <h1 class="mt-4">Why AI projects fail, and what AI implementation really costs</h1>
+        <h1 class="mt-5">Why AI projects fail, and what AI implementation really costs</h1>
 
-        <p class="lead mt-6" style="max-width: 60ch">
+        <p class="lead mt-6" style="max-width: 58ch">
           The most quoted statistic in this field is that <span class="num">80.3%</span> of AI projects
           fail. No study says that. RAND wrote <em>&ldquo;by some estimates, more than 80 percent&rdquo;</em>,
           and the decimal was added somewhere downstream.
         </p>
 
-        <p class="mt-4" style="max-width: 60ch; color: var(--color-muted)">
+        <p class="mt-4" style="max-width: 58ch; color: var(--color-muted)">
           We checked every figure on this site against the document it came from. Of
           <span class="num">{SOURCES.length}</span> sources, <span class="num num-danger">{DRIFTED.length}</span>
           are routinely misquoted in ways we could verify against the original, including one breakdown,
@@ -63,7 +63,10 @@ const schema = [
         </p>
 
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href="/ai-project-risk-diagnostic" class="btn btn-primary">Run the free diagnostic</a>
+          <a href="/ai-project-risk-diagnostic" class="btn btn-primary">
+            Run the free diagnostic
+            <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+          </a>
           <a href="/ai-project-failure-rate" class="btn btn-secondary">See what the research says</a>
         </div>
 
@@ -72,28 +75,34 @@ const schema = [
         </p>
       </div>
 
-      <!-- The drift, made visual. This is the site in one card. -->
+      <!-- The drift, made visual: a marked-up proof. This is the site in one card. -->
       <div>
-        <figure
-          class="border p-6"
-          style="border-color: var(--color-hairline); background: var(--color-surface); border-radius: 2px"
-        >
-          <figcaption class="overline">The figure as it circulates</figcaption>
+        <figure class="panel relative p-6 sm:p-7">
+          <!-- Editor's stamp -->
+          <span
+            class="absolute select-none"
+            aria-hidden="true"
+            style="top: 1.1rem; right: 0.9rem; transform: rotate(-6deg); font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-danger); border: 2px solid var(--color-danger); border-radius: 3px; padding: 0.2rem 0.45rem; opacity: 0.9;"
+          >
+            Unsourced
+          </span>
+
+          <figcaption class="overline overline-muted">The figure as it circulates</figcaption>
           <p
-            class="num mt-2"
-            style="font-size: 3.25rem; line-height: 1; color: var(--color-danger); text-decoration: line-through; text-decoration-thickness: 3px"
+            class="num mt-3"
+            style="font-size: clamp(3rem, 2rem + 4vw, 4rem); line-height: 0.95; color: var(--color-danger); text-decoration: line-through; text-decoration-thickness: 4px; text-decoration-color: var(--color-danger)"
           >
             80.3%
           </p>
 
-          <hr class="my-5" style="border: 0; border-top: 1px solid var(--color-hairline)" />
+          <div class="my-6 rule-ticks" style="opacity: 0.6"></div>
 
-          <p class="overline">What RAND actually wrote</p>
-          <p class="mt-2" style="font-family: var(--font-serif); font-size: 1.375rem; line-height: 1.35">
+          <p class="overline overline-tick">What RAND actually wrote</p>
+          <blockquote class="mt-3" style="border-left-width: 0; padding-left: 0; font-size: 1.34rem">
             &ldquo;By some estimates, <strong>more than 80 percent</strong> of AI projects fail,
             twice the rate of failure for information technology projects that do not involve
             AI.&rdquo;
-          </p>
+          </blockquote>
           <p class="mt-3 text-xs" style="color: var(--color-muted)">
             RAND, 2024. Punctuation normalised, wording unchanged.
           </p>
@@ -107,41 +116,44 @@ const schema = [
   </section>
 
   <!-- What this site is -->
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <div class="grid gap-10 md:grid-cols-3">
-      <div>
-        <p class="overline">01 &middot; Sources, not summaries</p>
-        <h2 class="mt-2" style="font-size: 1.3125rem">Every number carries its scaffolding</h2>
-        <p class="mt-3 text-sm" style="color: var(--color-muted)">
-          Sample size, method, fieldwork window, and a link, pinned in the margin beside the claim.
-          Where a study publishes no sample, we say so instead of inventing one.
-        </p>
-      </div>
-      <div>
-        <p class="overline">02 &middot; Predictions are labelled</p>
-        <h2 class="mt-2" style="font-size: 1.3125rem">A forecast is not a measurement</h2>
-        <p class="mt-3 text-sm" style="color: var(--color-muted)">
-          Two of the most repeated AI failure figures are Gartner forecasts about years that had not
-          happened yet when they were written. They get an amber dot, not a headline.
-        </p>
-      </div>
-      <div>
-        <p class="overline">03 &middot; Nothing to sell</p>
-        <h2 class="mt-2" style="font-size: 1.3125rem">No consultancy, no gate, no call</h2>
-        <p class="mt-3 text-sm" style="color: var(--color-muted)">
-          {SITE.disclosure}
-        </p>
-      </div>
+  <section class="mx-auto max-w-6xl px-4 py-20">
+    <p class="overline overline-tick overline-muted">How this site works</p>
+    <div class="mt-8 grid gap-px overflow-hidden rounded" style="background: var(--color-hairline); border: 1px solid var(--color-hairline)">
+      {
+        [
+          {
+            n: '01',
+            h: 'Every number carries its scaffolding',
+            p: 'Sample size, method, fieldwork window, and a link, pinned in the margin beside the claim. Where a study publishes no sample, we say so instead of inventing one.',
+          },
+          {
+            n: '02',
+            h: 'A forecast is not a measurement',
+            p: 'Two of the most repeated AI failure figures are Gartner forecasts about years that had not happened yet when they were written. They get an amber dot, not a headline.',
+          },
+          {
+            n: '03',
+            h: 'No consultancy, no gate, no call',
+            p: SITE.disclosure,
+          },
+        ].map((c) => (
+          <div class="p-7" style="background: var(--color-surface)">
+            <p class="num" style="font-size: 1.5rem; color: var(--color-accent); font-weight: 600">{c.n}</p>
+            <h2 class="mt-3" style="font-size: 1.28rem">{c.h}</h2>
+            <p class="mt-3 text-sm" style="color: var(--color-muted); line-height: 1.6">{c.p}</p>
+          </div>
+        ))
+      }
     </div>
   </section>
 
   <!-- Start here -->
   <section class="border-t" style="border-color: var(--color-hairline)">
-    <div class="mx-auto max-w-6xl px-4 py-16">
-      <p class="overline">Start here</p>
-      <h2 class="mt-2">The four questions people actually ask</h2>
+    <div class="mx-auto max-w-6xl px-4 py-20">
+      <p class="overline overline-tick">Start here</p>
+      <h2 class="mt-3">The four questions people actually ask</h2>
 
-      <div class="mt-8 grid gap-px" style="background: var(--color-hairline)">
+      <div class="mt-10 grid gap-4 sm:grid-cols-2">
         {
           [
             {
@@ -167,11 +179,14 @@ const schema = [
           ].map((item) => (
             <a
               href={item.href}
-              class="block p-6 no-underline"
-              style="background: var(--color-bg); color: var(--color-ink)"
+              class="panel card-lift group block p-6 no-underline"
+              style="background-image: none; color: var(--color-ink)"
             >
-              <h3 style="font-size: 1.1875rem; color: var(--color-accent)">{item.q}</h3>
-              <p class="mt-2 text-sm" style="color: var(--color-muted)">{item.a}</p>
+              <div class="flex items-start justify-between gap-3">
+                <h3 style="font-size: 1.24rem; color: var(--color-accent-deep)">{item.q}</h3>
+                <span class="num transition-transform group-hover:translate-x-1" aria-hidden="true" style="color: var(--color-accent); font-size: 1.1rem">&rarr;</span>
+              </div>
+              <p class="mt-2.5 text-sm" style="color: var(--color-muted); line-height: 1.6">{item.a}</p>
             </a>
           ))
         }
