@@ -94,17 +94,40 @@ Distinct from `agenticai.associates` (consultancy lead-gen, 0 impressions on any
 query in 90 days, its `/services/ai-implementation/` URL 301s), `aifor.tech` (tools directory, 0
 clicks in 90 days) and `aiagentic.news` (news aggregation, £0).
 
+## Indexing safety (do not delete)
+
+Every page canonicalises to `https://implementai.today`. Until DNS lands, the site is served from
+`*.pages.dev`, so that canonical points at a domain Google cannot fetch the site from.
+`functions/_middleware.js` therefore sets `X-Robots-Tag: noindex, nofollow` on any `*.pages.dev`
+hostname. On the real domain it is a no-op. **Keep it**: it also protects every future preview
+deployment. Do not "fix" the canonical to point at pages.dev; that would need a 301 migration later.
+
+## Analytics: deliberately absent
+
+GA4 is **not** wired, on purpose. `aiagentic.news` fires GA4 with no consent banner, which is a UK
+GDPR and ePrivacy problem. Do not repeat it here. Either add a CMP first, or use Cloudflare Web
+Analytics (cookieless, needs no consent banner). Provisioning the latter by API needs a token with
+account analytics scope; the cached wrangler OAuth does not have it.
+
 ## Blocked on Sunny
 
-- **Cloudflare Pages connection.** The `cfut_143a…` token in `master-builds.md` is dead, confirmed
-  again on this build. Needs a fresh token or a manual dashboard connect.
-- **DNS.** `implementai.today` is parked at Spaceship (`launch1/2.spaceship.net`). Point at Cloudflare.
-- **GA4 property.** Not yet created, not yet wired.
-- **Author E-E-A-T**, all blocking for full credit: a real headshot (not AI-generated, which would
-  contradict the site's thesis), canonical LinkedIn URL, GitHub URL (the load-bearing proof of
-  "builds software"), and a reciprocal author page on `sunnypatel.co.uk`.
+- **Cloudflare zone creation, the only real blocker.** The Pages custom domain
+  `implementai.today` is **already attached** to the project (status `pending`, validation `http`,
+  CF reports "CNAME record not set"). Cached wrangler OAuth has `pages:write` and `zone:read` but
+  **not** `zone.create`, so the zone itself cannot be added by API. Either:
+  1. Cloudflare dashboard, Add site, `implementai.today`, Free plan, then paste the two nameservers
+     into Spaceship (replacing `launch1/2.spaceship.net`). The attached custom domain then validates
+     and issues SSL on its own. **No further code change needed.**
+  2. Or supply a CF API token with `Zone: Zone: Edit` plus account-level zone create, and it can be
+     done end to end without you.
+  The `cfut_143a…` token in `master-builds.md` is DEAD, reconfirmed 2026-07-10. There is no Spaceship
+  registrar API credential anywhere in the credential stores; the nameserver change is registrar-side.
+- **Author E-E-A-T.** `sameAs` now carries the verified `https://github.com/sunnyp81`. Still needed:
+  a real headshot (**not** AI-generated, which would contradict this site's whole thesis), the
+  canonical LinkedIn URL, and a reciprocal author page on `sunnypatel.co.uk`.
 - **Ahrefs export** for the failure and cost clusters. Demand magnitude is genuinely unproven: Bing's
   keyword API is dead and no volume was ever obtained. Required before any wave-3 spend.
+- **GSC and Bing properties + sitemap submission**, once the real domain resolves. Pointless before.
 
 ## Standing obligations
 

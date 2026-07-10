@@ -12,8 +12,10 @@ export const SITE = {
     name: 'Sunny Patel',
     url: 'https://sunnypatel.co.uk',
     jobTitle: 'SEO consultant and software developer',
-    // MANUAL: Sunny to confirm canonical profile URLs before these ship in schema.
-    sameAs: ['https://sunnypatel.co.uk'] as string[],
+    // GitHub is the load-bearing proof of the only expertise this site claims:
+    // that its author builds and ships software. Verified 2026-07-10.
+    // MANUAL: add LinkedIn once Sunny confirms the canonical URL.
+    sameAs: ['https://sunnypatel.co.uk', 'https://github.com/sunnyp81'] as string[],
   },
 } as const;
 
